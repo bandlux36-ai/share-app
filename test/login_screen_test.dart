@@ -4,6 +4,39 @@ import 'package:share_app/app.dart';
 import 'package:share_app/features/auth/presentation/widgets/social_sign_in_button.dart';
 
 void main() {
+  testWidgets('390x844 layout keeps RTL controls and footer visible', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const ShareApp());
+    await tester.pumpAndSettle();
+
+    final email = tester.getRect(find.byType(TextFormField).first);
+    expect(
+      tester.getCenter(find.byIcon(Icons.mail_outline_rounded)).dx,
+      greaterThan(email.center.dx),
+    );
+    expect(
+      tester.getCenter(find.byIcon(Icons.lock_outline_rounded)).dx,
+      greaterThan(email.center.dx),
+    );
+    expect(
+      tester.getCenter(find.byIcon(Icons.visibility_outlined)).dx,
+      lessThan(email.center.dx),
+    );
+    for (final button in find.byType(SocialSignInButton).evaluate()) {
+      final size = tester.getSize(find.byWidget(button.widget));
+      expect(size.width, closeTo(size.height, 0.01));
+    }
+    expect(
+      tester.getBottomRight(find.text('إنشاء حساب جديد')).dy,
+      lessThanOrEqualTo(844),
+    );
+  });
+
   testWidgets('Arabic RTL screen and all four demo providers are present', (
     tester,
   ) async {

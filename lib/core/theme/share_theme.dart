@@ -4,11 +4,12 @@ abstract final class ShareTheme {
   static const navy = Color(0xFF001C30);
   static const heading = Color(0xFF10163F);
   static const muted = Color(0xFF7C88AF);
+  static const secondary = Color(0xFF9A9EAE);
   static const yellow = Color(0xFFFFCD50);
-  static const background = Color(0xFFFFFDFA);
+  static const background = Color(0xFFFFFCF6);
   static const warmShadow = BoxShadow(
-    color: Color(0x0CF0BE68),
-    blurRadius: 26,
+    color: Color(0x18E6BA78),
+    blurRadius: 24,
     offset: Offset(0, 9),
   );
 

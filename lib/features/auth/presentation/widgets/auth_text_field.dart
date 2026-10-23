@@ -51,26 +51,26 @@ class AuthTextField extends StatelessWidget {
           hintStyle: const TextStyle(color: ShareTheme.muted, fontSize: 16),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 23),
           prefixIcon: Padding(
             padding: const EdgeInsetsDirectional.only(start: 12, end: 8),
             child: Icon(icon, size: 25, color: ShareTheme.muted),
           ),
           suffixIcon: trailing,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
             borderSide: const BorderSide(color: ShareTheme.yellow, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
             borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
           ),
         ),

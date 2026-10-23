@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
               return SingleChildScrollView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.fromLTRB(22, 25 + space, 22, 26),
+                padding: EdgeInsets.fromLTRB(20, 38 + space / 2, 20, 26),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 420),
@@ -72,13 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const Center(child: ShareLogo()),
-                            SizedBox(height: 16 + space),
+                            SizedBox(height: 12 + space / 2),
                             const FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'ارفع محتواك .. وانشره في كل مكان',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 23,
                                   fontWeight: FontWeight.w700,
                                   color: ShareTheme.heading,
                                 ),
@@ -89,11 +89,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               'صور، فيديوهات .. إلى جميع منصاتك بسهولة',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 15,
-                                color: ShareTheme.muted,
+                                fontSize: 13,
+                                color: ShareTheme.secondary,
                               ),
                             ),
-                            SizedBox(height: 34 + space),
+                            SizedBox(height: 30 + space / 2),
                             AuthTextField(
                               controller: _email,
                               label: 'البريد الإلكتروني',
@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(height: 8 + space),
                             DecoratedBox(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(22),
+                                borderRadius: BorderRadius.circular(24),
                                 gradient: const LinearGradient(
                                   colors: [
                                     Color(0xFFFFCD50),
@@ -176,9 +176,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   foregroundColor: ShareTheme.navy,
-                                  minimumSize: const Size.fromHeight(64),
+                                  minimumSize: const Size.fromHeight(70),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
+                                    borderRadius: BorderRadius.circular(24),
                                   ),
                                 ),
                                 child: const Row(
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 31 + space),
+                            SizedBox(height: 27 + space / 2),
                             const Row(
                               children: [
                                 Expanded(
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 30 + space),
+                            SizedBox(height: 26 + space / 2),
                             Wrap(
                               alignment: WrapAlignment.center,
                               crossAxisAlignment: WrapCrossAlignment.center,

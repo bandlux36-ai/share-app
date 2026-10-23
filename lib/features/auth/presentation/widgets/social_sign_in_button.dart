@@ -39,8 +39,8 @@ class SocialSignInButton extends StatelessWidget {
           child: Semantics(
             button: true,
             label: 'تسجيل الدخول بواسطة $name',
-            child: SizedBox(
-              height: 72,
+            child: AspectRatio(
+              aspectRatio: 1,
               child: Center(child: ExcludeSemantics(child: _icon())),
             ),
           ),

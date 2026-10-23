@@ -13,20 +13,20 @@ class ShareLogo extends StatelessWidget {
       image: true,
       child: ExcludeSemantics(
         child: SizedBox(
-          width: 250,
-          height: 128,
+          width: 270,
+          height: 140,
           child: Stack(
             alignment: Alignment.center,
             children: [
               Positioned(
                 top: 0,
-                left: 117,
+                left: 126,
                 child: Transform.rotate(
                   angle: -0.5,
                   child: const Icon(
                     Icons.send_rounded,
                     textDirection: TextDirection.ltr,
-                    size: 45,
+                    size: 49,
                     color: ShareTheme.yellow,
                   ),
                 ),
@@ -36,7 +36,7 @@ class ShareLogo extends StatelessWidget {
                 child: Text(
                   'شير',
                   style: TextStyle(
-                    fontSize: 88,
+                    fontSize: 96,
                     height: 1.5,
                     fontWeight: FontWeight.w900,
                     color: ShareTheme.navy,
@@ -45,7 +45,7 @@ class ShareLogo extends StatelessWidget {
               ),
               Positioned(
                 left: 8,
-                top: 40,
+                top: 44,
                 child: Transform.rotate(
                   angle: -0.5,
                   child: const Icon(
@@ -57,7 +57,7 @@ class ShareLogo extends StatelessWidget {
               ),
               Positioned(
                 right: 8,
-                top: 40,
+                top: 44,
                 child: Transform.rotate(
                   angle: 0.5,
                   child: const Icon(

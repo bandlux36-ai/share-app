@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (84)
+## ملفات جديدة (86)
 
 - `.gitignore`
 - `analysis_options.yaml`
@@ -82,6 +82,8 @@
 - `lib/main.dart`
 - `pubspec.lock`
 - `pubspec.yaml`
+- `screenshots/login-screen.png`
+- `screenshots/login-screen-v2.png`
 - `test/login_screen_test.dart`
 - `web/favicon.png`
 - `web/icons/Icon-192.png`
