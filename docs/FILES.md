@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (91)
+## ملفات جديدة (98)
 
 - `.gitignore`
 - `AGENTS.md`
@@ -76,12 +76,16 @@
 - `ios/Runner/SceneDelegate.swift`
 - `ios/RunnerTests/RunnerTests.swift`
 - `lib/app.dart`
+- `lib/core/config/supabase_config.dart`
 - `lib/core/theme/share_theme.dart`
+- `lib/features/auth/data/auth_service.dart`
+- `lib/features/auth/presentation/auth_gate.dart`
 - `lib/features/auth/presentation/login_screen.dart`
 - `lib/features/auth/presentation/widgets/auth_text_field.dart`
 - `lib/core/widgets/share_logo.dart`
 - `lib/features/auth/presentation/widgets/social_sign_in_button.dart`
 - `lib/main.dart`
+- `lib/features/home/presentation/home_screen.dart`
 - `pubspec.lock`
 - `pubspec.yaml`
 - `screenshots/login-screen.png`
@@ -89,7 +93,10 @@
 - `screenshots/login-screen-final.png`
 - `screenshots/login-logo-fixed.png`
 - `screenshots/login-logo-final.png`
+- `test/auth_flow_test.dart`
+- `test/auth_service_test.dart`
 - `test/login_screen_test.dart`
+- `test/support/fake_auth_service.dart`
 - `web/favicon.png`
 - `web/icons/Icon-192.png`
 - `web/icons/Icon-512.png`

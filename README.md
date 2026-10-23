@@ -35,13 +35,25 @@ flutter run -d chrome --no-web-resources-cdn
 
 [لقطة الشاشة مع الأصل الرسومي المشترك — 390×844](screenshots/login-logo-final.png)
 
-## السلوك التجريبي
+## تسجيل الدخول
 
 - الحقول تدعم البريد وكلمة المرور وإظهارها وإخفاءها، مع تحقق محلي بسيط.
-- جرّب `demo@example.com` وأي كلمة مرور غير فارغة؛ يظهر إشعار تجريبي فقط.
+- استخدم حسابًا موجودًا في Supabase Auth: البريد وكلمة المرور يُرسلان عبر `signInWithPassword`. ليست هناك بيانات دخول تجريبية مضمّنة.
 - أزرار المنصات واستعادة كلمة المرور وإنشاء الحساب تعرض رسائل توضيحية فقط.
-- لا توجد قاعدة بيانات أو اتصالات تسجيل دخول أو مفاتيح سرية مطلوبة.
+- يعرض زر الدخول مؤشر تحميل ويمنع الطلبات المتكررة. أخطاء البيانات والاتصال تظهر بالعربية.
+- عند نجاح الدخول تظهر `HomeScreen` برسالة ترحيب وزر خروج. يستخدم الخروج `signOut` ثم تعيد حالة الجلسة المستخدم لشاشة الدخول.
+- يستعيد Supabase الجلسة المخزّنة عند تشغيل التطبيق؛ المستخدم المسجّل يدخل إلى الرئيسية مباشرة.
 - المساحة الآمنة والتمرير والحد الأقصى لعرض المحتوى تدعم الشاشات المختلفة والاتجاه الأفقي ولوحة المفاتيح.
+
+## تهيئة Supabase
+
+ثُبّتت حزمة `supabase_flutter`، وتُهيّأ مرة واحدة قبل `runApp` في `lib/main.dart`. إعداد المشروع منفصل في `lib/core/config/supabase_config.dart`، ويستخدم عنوان المشروع وPublishable key العام المخصص لتطبيقات العميل. لا يوجد مفتاح `service_role` أو مفتاح سري في هذا الإعداد.
+
+يمكن تجاوز القيم العامة بواسطة `--dart-define=SUPABASE_URL=...` و`--dart-define=SUPABASE_PUBLISHABLE_KEY=...`. لا تمرر مفاتيح إدارية أو سرية عبر هذه الخيارات: قيم تطبيقات العميل قابلة للاستخراج من حزمة التطبيق. صلاحيات البيانات يجب أن تظل محكومة بسياسات RLS في Supabase.
+
+منطق المصادقة مستقل في `lib/features/auth/data/auth_service.dart`، وتتابع `AuthGate` حالة الجلسة لعرض شاشة الدخول أو الرئيسية دون إبقاء شاشة محمية في سجل الرجوع بعد الخروج. تصميم الدخول محفوظ. لا تُنشأ حسابات أو جداول تلقائيًا. Google وApple وFacebook وX وإنشاء الحساب واستعادة كلمة المرور تظل أزرارًا تجريبية. أضيف تصريح INTERNET لإصدار Android الأساسي.
+
+نطاق مشروع Supabase هو `iroqzjahasvmhtmsmsvy.supabase.co`؛ حُفظ السماح به في مسودة إعدادات البيئة، مع الإبقاء على نطاق تنزيل Flutter الحالي.
 
 ## تنظيم الملفات
 
@@ -49,15 +61,21 @@ flutter run -d chrome --no-web-resources-cdn
 lib/
   main.dart
   app.dart
+  core/config/supabase_config.dart
   core/theme/share_theme.dart
   core/widgets/share_logo.dart
+  features/auth/data/auth_service.dart
   features/auth/presentation/
+    auth_gate.dart
     login_screen.dart
     widgets/
       auth_text_field.dart
       social_sign_in_button.dart
+  features/home/presentation/home_screen.dart
 assets/fonts/                 # Noto Sans Arabic وترخيص OFL
 test/login_screen_test.dart   # RTL والحقول والأزرار والأحجام المختلفة
+test/auth_flow_test.dart      # التحميل والتحقق والجلسة والدخول والخروج
+test/auth_service_test.dart   # طلبات Supabase وترجمة أخطاء الخادم والاتصال
 android/                     # Android / Kotlin
 ios/                         # iOS / Swift
 web/                         # معاينة المتصفح
@@ -69,7 +87,7 @@ web/                         # معاينة المتصفح
 
 ## حالة التحقق في البيئة السحابية
 
-نجح `flutter analyze` دون ملاحظات، ونجحت اختبارات الواجهة التسعة. أمر بناء الويب: `flutter build web --release --no-web-resources-cdn`. تغطي الاختبارات RTL وإظهار كلمة المرور والتحقق المحلي وإرسال النموذج وأحجام شاشات متعددة وتكبير النص ولوحة المفاتيح.
+نجح `flutter analyze` دون ملاحظات، ونجحت الاختبارات العشرون. أمر بناء الويب: `flutter build web --release --no-web-resources-cdn`. تغطي الاختبارات RTL وإظهار كلمة المرور والتحقق المحلي وإرسال النموذج وأحجام شاشات متعددة وتكبير النص ولوحة المفاتيح، إضافة إلى طلبات المصادقة والجلسة ورسائل الخطأ. اختبارات الدخول والخروج تستخدم خدمة اختبارية أو Supabase SDK مع خادم HTTP محاكى، ولا تسجّل الدخول بحساب إنتاجي ولا تنشئ حسابات. جرى أيضًا فحص المتصفح مع استجابات Auth محاكاة: الدخول، واستعادة الجلسة بعد تحديث الصفحة، والخروج، وبقاء حالة الخروج بعد تحديث جديد. لقطة الدخول بقيت مطابقة للصورة السابقة.
 
 لم يُختبر بناء Android أو iOS: لا يوجد Android SDK في هذه البيئة، وبناء iOS يتطلب macOS وXcode. لا تحتاج الشاشة أي أسرار. حُفظت إضافة `storage.googleapis.com` لسياسة الشبكة لتنزيل أدوات Flutter.
 

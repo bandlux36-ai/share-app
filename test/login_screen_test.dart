@@ -3,7 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:share_app/app.dart';
 import 'package:share_app/features/auth/presentation/widgets/social_sign_in_button.dart';
 
+import 'support/fake_auth_service.dart';
+
 void main() {
+  late FakeAuthService auth;
+  setUp(() => auth = FakeAuthService());
+  tearDown(() => auth.dispose());
   testWidgets('390x844 layout keeps RTL controls and footer visible', (
     tester,
   ) async {
@@ -11,7 +16,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const ShareApp());
+    await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
 
     final email = tester.getRect(find.byType(TextFormField).first);
@@ -40,7 +45,7 @@ void main() {
   testWidgets('Arabic RTL screen and all four demo providers are present', (
     tester,
   ) async {
-    await tester.pumpWidget(const ShareApp());
+    await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
 
     expect(find.text('ارفع محتواك .. وانشره في كل مكان'), findsOneWidget);
@@ -54,7 +59,7 @@ void main() {
   testWidgets('Password visibility can be toggled in both directions', (
     tester,
   ) async {
-    await tester.pumpWidget(const ShareApp());
+    await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
     final password = find.byType(TextFormField).last;
     expect(tester.widget<TextFormField>(password).controller, isNotNull);
@@ -78,10 +83,10 @@ void main() {
     );
   });
 
-  testWidgets('Login validates input and shows only a demo result', (
+  testWidgets('Login validates input and opens Home on success', (
     tester,
   ) async {
-    await tester.pumpWidget(const ShareApp());
+    await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
     final submit = find.widgetWithText(ElevatedButton, 'تسجيل الدخول');
     await tester.ensureVisible(submit);
@@ -98,10 +103,7 @@ void main() {
     await tester.ensureVisible(submit);
     await tester.tap(submit);
     await tester.pumpAndSettle();
-    expect(
-      find.text('مرحبًا بك في شير! هذه معاينة تجريبية دون تسجيل دخول فعلي.'),
-      findsOneWidget,
-    );
+    expect(find.text('مرحبًا بك في شير'), findsOneWidget);
   });
 
   for (final size in const [
@@ -117,7 +119,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(const ShareApp());
+      await tester.pumpWidget(ShareApp(authService: auth));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('إنشاء حساب جديد'));
       await tester.pumpAndSettle();
@@ -138,7 +140,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await tester.pumpWidget(const ShareApp());
+    await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byType(TextFormField).last);
     await tester.tap(find.byType(TextFormField).last);

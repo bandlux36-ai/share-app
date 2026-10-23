@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/share_theme.dart';
+import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
 import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.authService});
+
+  final AuthService authService;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -17,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _hidePassword = true;
+  bool _signingIn = false;
 
   @override
   void dispose() {
@@ -31,10 +35,24 @@ class _LoginScreenState extends State<LoginScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      FocusScope.of(context).unfocus();
-      _demo('مرحبًا بك في شير! هذه معاينة تجريبية دون تسجيل دخول فعلي.');
+  Future<void> _login() async {
+    if (_signingIn || !_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _signingIn = true);
+    try {
+      await widget.authService.signIn(
+        email: _email.text.trim(),
+        password: _password.text,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      _demo(
+        error is AuthFailure
+            ? error.message
+            : 'تعذّر تسجيل الدخول. حاول مرة أخرى.',
+      );
+    } finally {
+      if (mounted) setState(() => _signingIn = false);
     }
   }
 
@@ -119,7 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               obscureText: _hidePassword,
                               textInputAction: TextInputAction.done,
                               onSubmitted: (_) => _login(),
-                              validator: (value) => (value?.isEmpty ?? true)
+                              validator: (value) =>
+                                  (value?.trim().isEmpty ?? true)
                                   ? 'أدخل كلمة المرور'
                                   : null,
                               trailing: IconButton(
@@ -171,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 boxShadow: const [ShareTheme.warmShadow],
                               ),
                               child: ElevatedButton(
-                                onPressed: _login,
+                                onPressed: _signingIn ? null : _login,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
@@ -181,27 +200,38 @@ class _LoginScreenState extends State<LoginScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                 ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  textDirection: TextDirection.ltr,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        'تسجيل الدخول',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
+                                child: _signingIn
+                                    ? const SizedBox(
+                                        width: 26,
+                                        height: 26,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: ShareTheme.navy,
+                                          semanticsLabel: 'جارٍ تسجيل الدخول',
                                         ),
+                                      )
+                                    : const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        textDirection: TextDirection.ltr,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              'تسجيل الدخول',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 15),
+                                          Icon(
+                                            Icons.arrow_forward_rounded,
+                                            size: 28,
+                                            textDirection: TextDirection.ltr,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    SizedBox(width: 15),
-                                    Icon(
-                                      Icons.arrow_forward_rounded,
-                                      size: 28,
-                                      textDirection: TextDirection.ltr,
-                                    ),
-                                  ],
-                                ),
                               ),
                             ),
                             SizedBox(height: 27 + space / 2),
