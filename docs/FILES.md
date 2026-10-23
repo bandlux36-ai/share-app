@@ -4,9 +4,10 @@
 
 - `README.md`
 
-## ملفات جديدة (89)
+## ملفات جديدة (91)
 
 - `.gitignore`
+- `AGENTS.md`
 - `analysis_options.yaml`
 - `android/.gitignore`
 - `android/app/build.gradle.kts`
@@ -78,7 +79,7 @@
 - `lib/core/theme/share_theme.dart`
 - `lib/features/auth/presentation/login_screen.dart`
 - `lib/features/auth/presentation/widgets/auth_text_field.dart`
-- `lib/features/auth/presentation/widgets/share_logo.dart`
+- `lib/core/widgets/share_logo.dart`
 - `lib/features/auth/presentation/widgets/social_sign_in_button.dart`
 - `lib/main.dart`
 - `pubspec.lock`
@@ -87,6 +88,7 @@
 - `screenshots/login-screen-v2.png`
 - `screenshots/login-screen-final.png`
 - `screenshots/login-logo-fixed.png`
+- `screenshots/login-logo-final.png`
 - `test/login_screen_test.dart`
 - `web/favicon.png`
 - `web/icons/Icon-192.png`

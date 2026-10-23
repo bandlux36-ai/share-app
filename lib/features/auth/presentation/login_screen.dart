@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/share_theme.dart';
 import 'widgets/auth_text_field.dart';
-import 'widgets/share_logo.dart';
+import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
 
 class LoginScreen extends StatefulWidget {

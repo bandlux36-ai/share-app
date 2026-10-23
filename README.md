@@ -33,7 +33,7 @@ flutter run -d chrome --no-web-resources-cdn
 
 ## معاينة التصميم
 
-[لقطة الشاشة مع الشعار المصحح — 390×844](screenshots/login-logo-fixed.png)
+[لقطة الشاشة مع الأصل الرسومي المشترك — 390×844](screenshots/login-logo-final.png)
 
 ## السلوك التجريبي
 
@@ -50,10 +50,10 @@ lib/
   main.dart
   app.dart
   core/theme/share_theme.dart
+  core/widgets/share_logo.dart
   features/auth/presentation/
     login_screen.dart
     widgets/
-      share_logo.dart
       auth_text_field.dart
       social_sign_in_button.dart
 assets/fonts/                 # Noto Sans Arabic وترخيص OFL
@@ -63,7 +63,7 @@ ios/                         # iOS / Swift
 web/                         # معاينة المتصفح
 ```
 
-الشعار العلوي وزخارفه أصل PNG شفاف مستقل في `assets/branding/share-logo.png`، أُنشئ استنادًا إلى الصورة المرجعية لتقريب شكل الحروف والنقاط والطائرة والزخارف الذهبية. لا يعتمد على نص أو أيقونات Flutter. هذه إعادة إنشاء بصري وليست ملف الشعار الأصلي؛ يمكن استبدال الأصل الرسومي عند توفره دون تغيير تخطيط الشاشة. علامات Google وFacebook وX مرسومة محليًا كبدائل تجريبية، وApple من Material Icons. أيقونات التطبيق عند التثبيت ما زالت أيقونات Flutter الافتراضية.
+الشعار العلوي وزخارفه أصل PNG شفاف مستقل في `assets/branding/share-logo.png`، أُنشئ استنادًا إلى الصورة المرجعية لتقريب شكل الحروف والنقاط والطائرة والزخارف الذهبية. لا يعتمد على نص أو أيقونات Flutter. تستخدمه شاشة الدخول عبر المكوّن المشترك `lib/core/widgets/share_logo.dart`، ويجب استخدام هذا المكوّن نفسه في جميع الشاشات القادمة. هذه إعادة إنشاء بصري وليست ملف الشعار الأصلي؛ يمكن استبدال الأصل الرسومي عند توفره دون تغيير تخطيط الشاشة. علامات Google وFacebook وX مرسومة محليًا كبدائل تجريبية، وApple من Material Icons. أيقونات التطبيق عند التثبيت ما زالت أيقونات Flutter الافتراضية.
 
 خط Noto Sans Arabic وخط Roboto الاحتياطي مضمنان محليًا من Google Fonts تحت رخصة OFL، ولا يحتاجان تحميلًا وقت التشغيل.
 
