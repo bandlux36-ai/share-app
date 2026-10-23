@@ -2,8 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/share_theme.dart';
-
 enum SocialProvider { google, apple, facebook, x }
 
 class SocialSignInButton extends StatelessWidget {
@@ -27,12 +25,19 @@ class SocialSignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(21),
-        boxShadow: const [ShareTheme.warmShadow],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12001C30),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(21),
+        borderRadius: BorderRadius.circular(24),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onPressed,

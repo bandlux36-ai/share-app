@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: ShareTheme.secondary,
                               ),
                             ),
-                            SizedBox(height: 30 + space / 2),
+                            SizedBox(height: 24 + space / 2),
                             AuthTextField(
                               controller: _email,
                               label: 'البريد الإلكتروني',
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 26 + space / 2),
+                            SizedBox(height: 18 + space / 2),
                             Wrap(
                               alignment: WrapAlignment.center,
                               crossAxisAlignment: WrapCrossAlignment.center,

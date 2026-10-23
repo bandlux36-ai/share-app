@@ -31,7 +31,17 @@ class AuthTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(boxShadow: [ShareTheme.warmShadow]),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10001C30),
+            blurRadius: 20,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
@@ -44,33 +54,41 @@ class AuthTextField extends StatelessWidget {
         textDirection: TextDirection.ltr,
         validator: validator,
         onFieldSubmitted: onSubmitted,
-        style: const TextStyle(color: ShareTheme.navy, fontSize: 16),
+        style: const TextStyle(color: ShareTheme.navy, fontSize: 17),
         decoration: InputDecoration(
           hintText: label,
           hintTextDirection: TextDirection.rtl,
-          hintStyle: const TextStyle(color: ShareTheme.muted, fontSize: 16),
+          hintStyle: const TextStyle(color: ShareTheme.muted, fontSize: 17),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 23),
-          prefixIcon: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 12, end: 8),
-            child: Icon(icon, size: 25, color: ShareTheme.muted),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 18,
+            vertical: 26,
           ),
-          suffixIcon: trailing,
+          prefixIcon: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16, end: 12),
+            child: Icon(icon, size: 27, color: ShareTheme.muted),
+          ),
+          suffixIcon: trailing == null
+              ? null
+              : Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 8),
+                  child: trailing,
+                ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(28),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(28),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(28),
             borderSide: const BorderSide(color: ShareTheme.yellow, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(28),
             borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
           ),
         ),

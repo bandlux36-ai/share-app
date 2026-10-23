@@ -33,7 +33,7 @@ flutter run -d chrome --no-web-resources-cdn
 
 ## معاينة التصميم
 
-[لقطة شاشة الإصدار الثاني — 390×844](screenshots/login-screen-v2.png)
+[لقطة الشاشة النهائية — 390×844](screenshots/login-screen-final.png)
 
 ## السلوك التجريبي
 
