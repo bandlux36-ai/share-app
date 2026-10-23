@@ -1,0 +1,137 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-pages.yml'
+      - 'lib/**'
+      - 'assets/**'
+      - 'web/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'analysis_options.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+      DASH__SUPPRESS_ANALYTICS: 'true'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Verify real authentication source is committed
+        shell: bash
+        run: |
+          for file in lib/core/config/supabase_config.dart lib/features/auth/data/auth_service.dart lib/features/auth/presentation/auth_gate.dart lib/features/home/presentation/home_screen.dart; do
+            if [ ! -f "$file" ]; then
+              echo "::error file=$file::Supabase Auth source is missing from GitHub. Commit the app authentication changes separately before deploying."
+              exit 1
+            fi
+          done
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.47.8'
+          channel: stable
+          cache: true
+
+      - name: Install locked dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Validate public Supabase build configuration
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY || secrets.SUPABASE_PUBLISHABLE_KEY }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64
+          import json
+          import os
+          import re
+          from pathlib import Path
+          from urllib.parse import urlsplit
+
+          url = os.environ.get('SUPABASE_URL', '').strip()
+          key = os.environ.get('SUPABASE_PUBLISHABLE_KEY', '').strip()
+          try:
+              parsed = urlsplit(url)
+              valid_url = (
+                  parsed.scheme == 'https' and bool(parsed.hostname)
+                  and not parsed.username and not parsed.password
+                  and parsed.path in ('', '/') and not parsed.query
+                  and not parsed.fragment and parsed.port in (None, 443)
+              )
+          except ValueError:
+              valid_url = False
+          if not valid_url:
+              raise SystemExit('::error::Set SUPABASE_URL to your HTTPS project URL in Actions Variables or Secrets.')
+
+          valid_key = bool(re.fullmatch(r'sb_publishable_[A-Za-z0-9_-]+', key))
+          if not valid_key:
+              try:
+                  parts = key.split('.')
+                  payload = parts[1]
+                  valid_key = len(parts) == 3 and json.loads(
+                      base64.urlsafe_b64decode(payload + '=' * (-len(payload) % 4))
+                  ).get('role') == 'anon'
+              except (IndexError, ValueError, TypeError, AttributeError):
+                  valid_key = False
+          if not valid_key:
+              raise SystemExit('::error::Set SUPABASE_PUBLISHABLE_KEY to a client publishable/anon key. Server keys are not allowed.')
+
+          destination = Path(os.environ['RUNNER_TEMP']) / 'share-public-config.json'
+          destination.write_text(json.dumps({
+              'SUPABASE_URL': url,
+              'SUPABASE_PUBLISHABLE_KEY': key,
+          }))
+          PY
+
+      - name: Build release Web app for share-app
+        shell: bash
+        run: |
+          flutter build web --release --base-href /share-app/ --no-web-resources-cdn --dart-define-from-file="$RUNNER_TEMP/share-public-config.json"
+          touch build/web/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
