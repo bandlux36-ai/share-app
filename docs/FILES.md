@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (87)
+## ملفات جديدة (89)
 
 - `.gitignore`
 - `analysis_options.yaml`
@@ -27,6 +27,7 @@
 - `android/gradle.properties`
 - `android/gradle/wrapper/gradle-wrapper.properties`
 - `android/settings.gradle.kts`
+- `assets/branding/share-logo.png`
 - `assets/fonts/NotoSansArabic.ttf`
 - `assets/fonts/OFL.txt`
 - `assets/fonts/Roboto-OFL.txt`
@@ -85,6 +86,7 @@
 - `screenshots/login-screen.png`
 - `screenshots/login-screen-v2.png`
 - `screenshots/login-screen-final.png`
+- `screenshots/login-logo-fixed.png`
 - `test/login_screen_test.dart`
 - `web/favicon.png`
 - `web/icons/Icon-192.png`
