@@ -47,7 +47,17 @@ abstract final class SupabaseConfig {
     return redirectUri(base).toString();
   }
 
-  static String? googleCallbackError(Uri callback, {required bool signedIn}) {
+  static String get appleRedirectUrl {
+    const configured = String.fromEnvironment('APPLE_AUTH_REDIRECT_URL');
+    final base = configured.isNotEmpty
+        ? Uri.parse(configured)
+        : kIsWeb
+        ? Uri.base.resolve('.')
+        : Uri.parse('https://bandlux36-ai.github.io/share-app/');
+    return redirectUri(base).toString();
+  }
+
+  static String? oauthCallbackError(Uri callback, {required bool signedIn}) {
     if (isRecoveryUri(callback)) return null;
     var fragment = <String, String>{};
     try {
@@ -57,14 +67,14 @@ abstract final class SupabaseConfig {
     }
     final params = {...fragment, ...callback.queryParameters};
     if (params['error'] == 'access_denied') {
-      return 'تم إلغاء تسجيل الدخول بـGoogle. يمكنك المحاولة مرة أخرى.';
+      return 'تم إلغاء تسجيل الدخول. يمكنك المحاولة مرة أخرى.';
     }
     if (params.containsKey('error') ||
         params.containsKey('error_code') ||
         (!signedIn &&
             (params.containsKey('code') ||
                 params.containsKey('access_token')))) {
-      return 'تعذّر إكمال تسجيل الدخول بـGoogle. حاول مرة أخرى.';
+      return 'تعذّر إكمال تسجيل الدخول. حاول مرة أخرى.';
     }
     return null;
   }

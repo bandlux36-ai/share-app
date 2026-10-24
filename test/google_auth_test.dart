@@ -8,7 +8,7 @@ import 'package:share_app/app.dart';
 import 'package:share_app/core/config/supabase_config.dart';
 import 'package:share_app/core/config/redirect_uri.dart';
 import 'package:share_app/features/auth/data/auth_service.dart';
-import 'package:share_app/features/auth/data/google_provider_settings.dart';
+import 'package:share_app/features/auth/data/oauth_provider_settings.dart';
 import 'package:share_app/features/auth/presentation/login_screen.dart';
 import 'package:share_app/features/auth/presentation/widgets/social_sign_in_button.dart';
 import 'package:share_app/features/home/presentation/home_screen.dart';
@@ -30,7 +30,8 @@ void main() {
       'https://example.invalid/share-app/?recovery=1',
     );
   });
-  GoogleProviderSettings settings(http.Client client) => GoogleProviderSettings(
+  OAuthProviderSettings settings(http.Client client) => OAuthProviderSettings(
+    provider: OAuthProvider.google,
     supabaseUrl: 'https://example.invalid',
     publishableKey: 'public-client-test-key',
     client: client,
@@ -157,19 +158,19 @@ void main() {
         'https://example.invalid/share-app/?error=access_denied&error_description=untrusted',
       );
       expect(
-        SupabaseConfig.googleCallbackError(uri, signedIn: false),
-        'تم إلغاء تسجيل الدخول بـGoogle. يمكنك المحاولة مرة أخرى.',
+        SupabaseConfig.oauthCallbackError(uri, signedIn: false),
+        'تم إلغاء تسجيل الدخول. يمكنك المحاولة مرة أخرى.',
       );
       final code = Uri.parse(
         'https://example.invalid/share-app/?code=mock-code',
       );
       expect(
-        SupabaseConfig.googleCallbackError(code, signedIn: false),
+        SupabaseConfig.oauthCallbackError(code, signedIn: false),
         isNotNull,
       );
-      expect(SupabaseConfig.googleCallbackError(code, signedIn: true), isNull);
+      expect(SupabaseConfig.oauthCallbackError(code, signedIn: true), isNull);
       expect(
-        SupabaseConfig.googleCallbackError(
+        SupabaseConfig.oauthCallbackError(
           Uri.parse('https://example.invalid/?recovery=1&code=mock-code'),
           signedIn: false,
         ),
@@ -215,7 +216,7 @@ void main() {
   );
 
   testWidgets(
-    'Google errors keep login available and other providers stay demos',
+    'Google errors keep login available and Apple remains independent',
     (tester) async {
       final auth = FakeAuthService();
       addTearDown(auth.dispose);
@@ -240,11 +241,9 @@ void main() {
       );
       await tester.tap(apple);
       await tester.pumpAndSettle();
-      expect(
-        find.text('تسجيل الدخول بواسطة apple تجريبي فقط.'),
-        findsOneWidget,
-      );
+      expect(find.text('تسجيل الدخول بواسطة apple تجريبي فقط.'), findsNothing);
       expect(auth.googleSignInCalls, 1);
+      expect(auth.appleSignInCalls, 1);
     },
   );
 
@@ -256,13 +255,12 @@ void main() {
     await tester.pumpWidget(
       ShareApp(
         authService: auth,
-        initialAuthError:
-            'تم إلغاء تسجيل الدخول بـGoogle. يمكنك المحاولة مرة أخرى.',
+        initialAuthError: 'تم إلغاء تسجيل الدخول. يمكنك المحاولة مرة أخرى.',
       ),
     );
     await tester.pumpAndSettle();
     expect(
-      find.text('تم إلغاء تسجيل الدخول بـGoogle. يمكنك المحاولة مرة أخرى.'),
+      find.text('تم إلغاء تسجيل الدخول. يمكنك المحاولة مرة أخرى.'),
       findsOneWidget,
     );
     expect(find.byType(LoginScreen), findsOneWidget);

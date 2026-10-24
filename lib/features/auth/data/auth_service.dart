@@ -12,6 +12,7 @@ abstract interface class AuthService {
   Future<void> updatePassword(String password);
   Future<void> signIn({required String email, required String password});
   Future<void> signInWithGoogle();
+  Future<void> signInWithApple();
   Future<void> signOut();
 }
 
@@ -28,10 +29,16 @@ class SupabaseAuthService implements AuthService {
     String? googleRedirectUrl,
     Future<bool> Function()? googleProviderEnabled,
     Future<bool> Function(String redirectUrl)? googleLauncher,
+    String? appleRedirectUrl,
+    Future<bool> Function()? appleProviderEnabled,
+    Future<bool> Function(String redirectUrl)? appleLauncher,
   }) : _passwordRecovery = passwordRecovery,
        _googleRedirectUrl = googleRedirectUrl,
        _googleProviderEnabled = googleProviderEnabled,
-       _googleLauncher = googleLauncher {
+       _googleLauncher = googleLauncher,
+       _appleRedirectUrl = appleRedirectUrl,
+       _appleProviderEnabled = appleProviderEnabled,
+       _appleLauncher = appleLauncher {
     authStateChanges = _client.auth.onAuthStateChange.map((event) {
       if (event.event == AuthChangeEvent.passwordRecovery) {
         _passwordRecovery = true;
@@ -48,29 +55,63 @@ class SupabaseAuthService implements AuthService {
   final Future<bool> Function()? _googleProviderEnabled;
   final Future<bool> Function(String redirectUrl)? _googleLauncher;
 
+  final String? _appleRedirectUrl;
+  final Future<bool> Function()? _appleProviderEnabled;
+  final Future<bool> Function(String redirectUrl)? _appleLauncher;
+
   @override
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle() => _signInWithOAuth(
+    provider: OAuthProvider.google,
+    label: 'Google',
+    redirectUrl: _googleRedirectUrl,
+    providerEnabled: _googleProviderEnabled,
+    launcher: _googleLauncher,
+    queryParams: const {'prompt': 'select_account'},
+  );
+
+  @override
+  Future<void> signInWithApple() => _signInWithOAuth(
+    provider: OAuthProvider.apple,
+    label: 'Apple',
+    redirectUrl: _appleRedirectUrl,
+    providerEnabled: _appleProviderEnabled,
+    launcher: _appleLauncher,
+  );
+
+  Future<void> _signInWithOAuth({
+    required OAuthProvider provider,
+    required String label,
+    String? redirectUrl,
+    Future<bool> Function()? providerEnabled,
+    Future<bool> Function(String redirectUrl)? launcher,
+    Map<String, String>? queryParams,
+  }) async {
     try {
-      if (_googleProviderEnabled != null && !await _googleProviderEnabled()) {
-        throw const AuthFailure(
-          'تسجيل الدخول بـGoogle غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
+      if (providerEnabled != null && !await providerEnabled()) {
+        throw AuthFailure(
+          'تسجيل الدخول بـ$label غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
         );
       }
       final redirect =
-          _googleRedirectUrl ??
-          redirectUri(Uri.parse(recoveryRedirectUrl)).toString();
-      final opened = _googleLauncher != null
-          ? await _googleLauncher(redirect)
+          redirectUrl ?? redirectUri(Uri.parse(recoveryRedirectUrl)).toString();
+      final opened = launcher != null
+          ? await launcher(redirect)
           : await _client.auth.signInWithOAuth(
-              OAuthProvider.google,
+              provider,
               redirectTo: redirect,
-              queryParams: const {'prompt': 'select_account'},
+              queryParams: queryParams,
             );
       if (!opened) {
-        throw const AuthFailure(
-          'تعذّر فتح تسجيل الدخول بـGoogle. حاول مرة أخرى.',
+        throw AuthFailure('تعذّر فتح تسجيل الدخول بـ$label. حاول مرة أخرى.');
+      }
+    } on AuthException catch (error) {
+      if (error.code == 'provider_disabled' ||
+          error.code == 'unsupported_provider') {
+        throw AuthFailure(
+          'تسجيل الدخول بـ$label غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
         );
       }
+      throw _failure(error);
     } catch (error) {
       throw _failure(error);
     }
@@ -143,7 +184,7 @@ class SupabaseAuthService implements AuthService {
         case 'provider_disabled':
         case 'unsupported_provider':
           return const AuthFailure(
-            'تسجيل الدخول بـGoogle غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
+            'طريقة تسجيل الدخول غير مفعّلة حاليًا. يرجى المحاولة لاحقًا.',
           );
         case 'invalid_credentials':
         case 'invalid_grant':

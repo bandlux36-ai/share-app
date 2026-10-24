@@ -48,6 +48,14 @@ class FakeAuthService implements AuthService {
   String? lastPassword;
   Future<void> Function()? beforeGoogleSignIn;
   int googleSignInCalls = 0;
+  Future<void> Function()? beforeAppleSignIn;
+  int appleSignInCalls = 0;
+
+  @override
+  Future<void> signInWithApple() async {
+    appleSignInCalls++;
+    await beforeAppleSignIn?.call();
+  }
 
   @override
   Future<void> signInWithGoogle() async {

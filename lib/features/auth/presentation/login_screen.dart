@@ -22,24 +22,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final _password = TextEditingController();
   bool _hidePassword = true;
   bool _signingIn = false;
-  bool _googleSigningIn = false;
+  SocialProvider? _socialSigningIn;
+  bool get _busy => _signingIn || _socialSigningIn != null;
 
-  Future<void> _googleLogin() async {
-    if (_signingIn || _googleSigningIn) return;
+  Future<void> _socialLogin(SocialProvider provider) async {
+    if (_busy) return;
     FocusScope.of(context).unfocus();
-    setState(() => _googleSigningIn = true);
+    setState(() => _socialSigningIn = provider);
     try {
-      await widget.authService.signInWithGoogle();
+      switch (provider) {
+        case SocialProvider.google:
+          await widget.authService.signInWithGoogle();
+        case SocialProvider.apple:
+          await widget.authService.signInWithApple();
+      }
     } catch (error) {
       if (mounted) {
+        final label = provider == SocialProvider.apple ? 'Apple' : 'Google';
         _demo(
           error is AuthFailure
               ? error.message
-              : 'تعذّر تسجيل الدخول بـGoogle. حاول مرة أخرى.',
+              : 'تعذّر تسجيل الدخول بـ$label. حاول مرة أخرى.',
         );
       }
     } finally {
-      if (mounted) setState(() => _googleSigningIn = false);
+      if (mounted) setState(() => _socialSigningIn = null);
     }
   }
 
@@ -57,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (_signingIn || _googleSigningIn || !_formKey.currentState!.validate()) {
+    if (_busy || !_formKey.currentState!.validate()) {
       return;
     }
     FocusScope.of(context).unfocus();
@@ -218,9 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 boxShadow: const [ShareTheme.warmShadow],
                               ),
                               child: ElevatedButton(
-                                onPressed: _signingIn || _googleSigningIn
-                                    ? null
-                                    : _login,
+                                onPressed: _busy ? null : _login,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
@@ -303,19 +308,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             child: SocialSignInButton(
                                               provider: provider,
                                               isLoading:
-                                                  provider ==
-                                                      SocialProvider.google &&
-                                                  _googleSigningIn,
-                                              onPressed:
-                                                  provider ==
-                                                      SocialProvider.google
-                                                  ? (_signingIn ||
-                                                            _googleSigningIn
-                                                        ? null
-                                                        : _googleLogin)
-                                                  : () => _demo(
-                                                      'تسجيل الدخول بواسطة ${provider.name} تجريبي فقط.',
-                                                    ),
+                                                  _socialSigningIn == provider,
+                                              onPressed: _busy
+                                                  ? null
+                                                  : () =>
+                                                        _socialLogin(provider),
                                             ),
                                           ),
                                         ],
