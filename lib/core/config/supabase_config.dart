@@ -15,7 +15,11 @@ abstract final class SupabaseConfig {
   );
 
   static Future<void> initialize() async {
-    await Supabase.initialize(url: url, publishableKey: publishableKey);
+    await Supabase.initialize(
+      url: url,
+      publishableKey: publishableKey,
+      authOptions: FlutterAuthClientOptions(detectSessionInUri: !kIsWeb),
+    );
   }
 
   static bool isRecoveryUri(Uri uri) {
@@ -63,6 +67,13 @@ abstract final class SupabaseConfig {
       /* Never display raw callback parameters. */
     }
     final params = {...fragment, ...callback.queryParameters};
+    if ([
+      'otp_expired',
+      'flow_state_expired',
+      'flow_state_not_found',
+    ].contains(params['error_code'])) {
+      return 'رابط الاستعادة غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.';
+    }
     if (params['error'] == 'access_denied') {
       return 'تم إلغاء تسجيل الدخول. يمكنك المحاولة مرة أخرى.';
     }

@@ -17,6 +17,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'support/fake_auth_service.dart';
 
 void main() {
+  test('Expired email links are not reported as OAuth cancellation', () {
+    expect(
+      SupabaseConfig.oauthCallbackError(
+        Uri.parse(
+          'https://example.invalid/?error=access_denied&error_code=otp_expired',
+        ),
+        signedIn: true,
+      ),
+      'رابط الاستعادة غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.',
+    );
+  });
+
   test('Auth redirects omit stale and empty query and fragment delimiters', () {
     final source = Uri.parse(
       'https://example.invalid/share-app/?code=mock#stale',
