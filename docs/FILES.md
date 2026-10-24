@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (116)
+## ملفات جديدة (118)
 
 - `.github/PAGES.md`
 - `.github/workflows/deploy-pages.yml`
@@ -124,3 +124,6 @@
 - `test/password_recovery_test.dart`
 
 - `lib/features/auth/presentation/forgot_password_screen.dart`
+
+- `lib/features/auth/presentation/sign_up_screen.dart`
+- `test/sign_up_test.dart`

@@ -127,7 +127,7 @@ void main() {
       await tester.tap(find.text('إنشاء حساب جديد'));
       await tester.pumpAndSettle();
       expect(
-        find.text('إنشاء حساب جديد سيتوفر لاحقًا. هذه نسخة تجريبية.'),
+        find.text('ابدأ رحلتك مع شير وشارك محتواك بكل سهولة'),
         findsOneWidget,
       );
     });

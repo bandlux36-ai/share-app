@@ -5,6 +5,21 @@ import 'package:share_app/features/auth/data/auth_service.dart';
 class FakeAuthService implements AuthService {
   FakeAuthService({bool signedIn = false}) : _signedIn = signedIn;
 
+  int signUpCalls = 0;
+  bool confirmEmail = true;
+  Future<void> Function()? beforeSignUp;
+  @override
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    signUpCalls++;
+    await beforeSignUp?.call();
+    if (!confirmEmail) changeSession(true);
+    return !confirmEmail;
+  }
+
   bool _signedIn;
   bool recovering = false;
   Future<void> Function()? beforeReset;

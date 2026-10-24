@@ -11,6 +11,11 @@ abstract interface class AuthService {
   Future<void> requestPasswordReset(String email);
   Future<void> updatePassword(String password);
   Future<void> signIn({required String email, required String password});
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+  });
   Future<void> signInWithGoogle();
   Future<void> signInWithApple();
   Future<void> signOut();
@@ -66,6 +71,25 @@ class SupabaseAuthService implements AuthService {
   final String? _appleRedirectUrl;
   final Future<bool> Function()? _appleProviderEnabled;
   final Future<bool> Function(String redirectUrl)? _appleLauncher;
+
+  @override
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _client.auth.signUp(
+        email: email.trim(),
+        password: password,
+        data: {'full_name': name.trim()},
+        emailRedirectTo: oauthRedirectUrl,
+      );
+      return response.session != null;
+    } catch (error) {
+      throw _failure(error);
+    }
+  }
 
   @override
   Future<void> signInWithGoogle() => _signInWithOAuth(

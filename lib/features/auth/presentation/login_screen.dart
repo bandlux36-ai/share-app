@@ -4,6 +4,7 @@ import '../../../core/theme/share_theme.dart';
 import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
 import 'forgot_password_screen.dart';
+import 'sign_up_screen.dart';
 import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
 
@@ -338,9 +339,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: TextStyle(fontSize: 15),
                                 ),
                                 TextButton(
-                                  onPressed: () => _demo(
-                                    'إنشاء حساب جديد سيتوفر لاحقًا. هذه نسخة تجريبية.',
-                                  ),
+                                  onPressed: _busy
+                                      ? null
+                                      : () => Navigator.of(context).push<void>(
+                                          MaterialPageRoute(
+                                            builder: (_) => SignUpScreen(
+                                              authService: widget.authService,
+                                            ),
+                                          ),
+                                        ),
                                   style: TextButton.styleFrom(
                                     foregroundColor: const Color(0xFFFFAF00),
                                   ),

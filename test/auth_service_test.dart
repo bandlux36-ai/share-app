@@ -36,6 +36,42 @@ void main() {
   }
 
   test(
+    'Signup sends name and email to Supabase and waits for confirmation',
+    () async {
+      late http.Request sent;
+      final client = clientWith((request) async {
+        sent = request;
+        return response({
+          'user': {
+            'id': 'new-user',
+            'email': 'new@example.com',
+            'app_metadata': {},
+            'user_metadata': {},
+            'created_at': '2026-01-01T00:00:00Z',
+          },
+        }, 200);
+      });
+      final service = SupabaseAuthService(
+        client,
+        oauthRedirectUrl: 'https://example.invalid/share-app/',
+      );
+      expect(
+        await service.signUp(
+          name: ' New User ',
+          email: ' new@example.com ',
+          password: 'Example-password-123',
+        ),
+        isFalse,
+      );
+      expect(sent.url.path, '/auth/v1/signup');
+      final body = jsonDecode(sent.body) as Map;
+      expect(body['email'], 'new@example.com');
+      expect(body['data']['full_name'], 'New User');
+      expect(service.isSignedIn, isFalse);
+    },
+  );
+
+  test(
     'Recovery email uses Supabase recover endpoint and explicit callback',
     () async {
       late http.Request sent;
