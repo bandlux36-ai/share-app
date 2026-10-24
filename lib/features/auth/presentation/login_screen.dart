@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/share_theme.dart';
 import '../data/auth_service.dart';
+import 'forgot_password_screen.dart';
 import 'widgets/auth_text_field.dart';
 import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
@@ -160,8 +161,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             Align(
                               alignment: AlignmentDirectional.centerStart,
                               child: TextButton(
-                                onPressed: () => _demo(
-                                  'استعادة كلمة المرور ستتوفر لاحقًا. هذه نسخة تجريبية.',
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => ForgotPasswordScreen(
+                                      authService: widget.authService,
+                                      initialEmail: _email.text.trim(),
+                                    ),
+                                  ),
                                 ),
                                 style: TextButton.styleFrom(
                                   foregroundColor: ShareTheme.muted,

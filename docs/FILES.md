@@ -4,8 +4,10 @@
 
 - `README.md`
 
-## ملفات جديدة (98)
+## ملفات جديدة (110)
 
+- `.github/PAGES.md`
+- `.github/workflows/deploy-pages.yml`
 - `.gitignore`
 - `AGENTS.md`
 - `analysis_options.yaml`
@@ -78,25 +80,35 @@
 - `lib/app.dart`
 - `lib/core/config/supabase_config.dart`
 - `lib/core/theme/share_theme.dart`
-- `lib/features/auth/data/auth_service.dart`
-- `lib/features/auth/presentation/auth_gate.dart`
-- `lib/features/auth/presentation/login_screen.dart`
-- `lib/features/auth/presentation/widgets/auth_text_field.dart`
 - `lib/core/widgets/share_logo.dart`
+- `lib/features/auth/data/auth_service.dart`
+- `lib/features/auth/platform/recovery_location.dart`
+- `lib/features/auth/platform/recovery_location_stub.dart`
+- `lib/features/auth/platform/recovery_location_web.dart`
+- `lib/features/auth/presentation/auth_gate.dart`
+- `lib/features/auth/presentation/forgot_password_screen.dart`
+- `lib/features/auth/presentation/login_screen.dart`
+- `lib/features/auth/presentation/reset_password_screen.dart`
+- `lib/features/auth/presentation/widgets/auth_text_field.dart`
+- `lib/features/auth/presentation/widgets/recovery_layout.dart`
 - `lib/features/auth/presentation/widgets/social_sign_in_button.dart`
-- `lib/main.dart`
 - `lib/features/home/presentation/home_screen.dart`
+- `lib/main.dart`
 - `pubspec.lock`
 - `pubspec.yaml`
-- `screenshots/login-screen.png`
-- `screenshots/login-screen-v2.png`
-- `screenshots/login-screen-final.png`
-- `screenshots/login-logo-fixed.png`
+- `screenshots/forgot-password.png`
 - `screenshots/login-logo-final.png`
+- `screenshots/login-logo-fixed.png`
+- `screenshots/login-screen-final.png`
+- `screenshots/login-screen-v2.png`
+- `screenshots/login-screen.png`
+- `screenshots/reset-password.png`
 - `test/auth_flow_test.dart`
 - `test/auth_service_test.dart`
 - `test/login_screen_test.dart`
+- `test/password_recovery_test.dart`
 - `test/support/fake_auth_service.dart`
+- `test/support/memory_auth_storage.dart`
 - `web/favicon.png`
 - `web/icons/Icon-192.png`
 - `web/icons/Icon-512.png`
