@@ -186,7 +186,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 24 + space),
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: TextButton(
+                                onPressed: _busy
+                                    ? null
+                                    : () => _demo(
+                                        'استعادة كلمة المرور غير متاحة حاليًا.',
+                                      ),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: ShareTheme.muted,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 10,
+                                  ),
+                                ),
+                                child: const Text(
+                                  'نسيت كلمة المرور؟',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8 + space),
                             DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(24),
