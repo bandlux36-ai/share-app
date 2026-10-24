@@ -8,8 +8,9 @@ import 'features/auth/data/oauth_provider_settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Capture OAuth errors before the SDK consumes the callback URL.
+  // Capture recovery state and OAuth errors before the SDK consumes the URL.
   final callback = Uri.base;
+  final passwordRecovery = SupabaseConfig.isRecoveryUri(callback);
   await SupabaseConfig.initialize();
   runApp(
     ShareApp(
@@ -20,6 +21,8 @@ Future<void> main() async {
       authService: SupabaseAuthService(
         Supabase.instance.client,
         oauthRedirectUrl: SupabaseConfig.oauthRedirectUrl,
+        recoveryRedirectUrl: SupabaseConfig.recoveryRedirectUrl,
+        passwordRecovery: passwordRecovery,
         googleRedirectUrl: SupabaseConfig.googleRedirectUrl,
         googleProviderEnabled: OAuthProviderSettings(
           provider: OAuthProvider.google,

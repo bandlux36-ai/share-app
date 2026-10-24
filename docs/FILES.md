@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (110)
+## ملفات جديدة (115)
 
 - `.github/PAGES.md`
 - `.github/workflows/deploy-pages.yml`
@@ -116,3 +116,9 @@
 - `web/icons/Icon-maskable-512.png`
 - `web/index.html`
 - `web/manifest.json`
+
+- `lib/features/auth/presentation/password_reset_sent_screen.dart`
+- `lib/features/auth/presentation/reset_password_screen.dart`
+- `lib/features/auth/presentation/widgets/recovery_layout.dart`
+- `test/direct_password_reset_test.dart`
+- `test/password_recovery_test.dart`

@@ -7,12 +7,19 @@ external void _replaceState(JSAny? state, JSString title, JSString url);
 void clearAuthLocation() {
   final uri = Uri.base;
   final query = Map<String, String>.of(uri.queryParameters);
-  for (final key in ['code', 'error', 'error_code', 'error_description']) {
+  for (final key in [
+    'recovery',
+    'code',
+    'error',
+    'error_code',
+    'error_description',
+  ]) {
     query.remove(key);
   }
   final authFragment =
       uri.fragment.contains('access_token=') ||
-      uri.fragment.contains('refresh_token=');
+      uri.fragment.contains('refresh_token=') ||
+      uri.fragment.contains('type=recovery');
   final clean = redirectUri(
     uri,
     queryParameters: query.isEmpty ? null : query,

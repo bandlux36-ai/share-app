@@ -18,6 +18,25 @@ abstract final class SupabaseConfig {
     await Supabase.initialize(url: url, publishableKey: publishableKey);
   }
 
+  static bool isRecoveryUri(Uri uri) {
+    if (uri.queryParameters['recovery'] == '1') return true;
+    try {
+      return Uri.splitQueryString(uri.fragment)['type'] == 'recovery';
+    } on FormatException {
+      return false;
+    }
+  }
+
+  static String get recoveryRedirectUrl {
+    final base = Uri.parse(
+      _redirectUrl(const String.fromEnvironment('PASSWORD_RESET_REDIRECT_URL')),
+    );
+    return redirectUri(
+      base,
+      queryParameters: const {'recovery': '1'},
+    ).toString();
+  }
+
   static String get oauthRedirectUrl => _redirectUrl('');
 
   static String get googleRedirectUrl =>
@@ -36,6 +55,7 @@ abstract final class SupabaseConfig {
   }
 
   static String? oauthCallbackError(Uri callback, {required bool signedIn}) {
+    if (isRecoveryUri(callback)) return null;
     var fragment = <String, String>{};
     try {
       fragment = Uri.splitQueryString(callback.fragment);

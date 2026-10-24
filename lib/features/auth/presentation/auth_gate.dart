@@ -6,6 +6,7 @@ import '../data/auth_service.dart';
 import '../platform/auth_location.dart';
 import '../../home/presentation/home_screen.dart';
 import 'login_screen.dart';
+import 'reset_password_screen.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key, required this.authService, this.initialAuthError});
@@ -24,14 +25,21 @@ class _AuthGateState extends State<AuthGate> {
   @override
   void initState() {
     super.initState();
-    _signedIn = widget.authService.isSignedIn;
-    if (widget.initialAuthError != null) {
+    final auth = widget.authService;
+    _signedIn = auth.isSignedIn;
+    var initialError = widget.initialAuthError;
+    if (auth.isPasswordRecovery && !_signedIn) {
+      auth.dismissPasswordRecovery();
+      initialError =
+          'رابط الاستعادة غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.';
+    }
+    if (initialError != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         clearAuthLocation();
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(widget.initialAuthError!)));
+        ).showSnackBar(SnackBar(content: Text(initialError!)));
       });
     }
     _subscription = widget.authService.authStateChanges.listen(
@@ -61,6 +69,16 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = widget.authService;
+    if (auth.isPasswordRecovery && _signedIn) {
+      return ResetPasswordScreen(
+        authService: auth,
+        onCompleted: () {
+          clearAuthLocation();
+          setState(() {});
+        },
+      );
+    }
     return _signedIn
         ? HomeScreen(authService: widget.authService)
         : LoginScreen(authService: widget.authService);

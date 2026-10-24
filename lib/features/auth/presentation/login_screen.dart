@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/share_theme.dart';
 import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
+import 'password_reset_sent_screen.dart';
 import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
 
@@ -21,8 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _password = TextEditingController();
   bool _hidePassword = true;
   bool _signingIn = false;
+  bool _sendingReset = false;
   SocialProvider? _socialSigningIn;
-  bool get _busy => _signingIn || _socialSigningIn != null;
+  bool get _busy => _signingIn || _sendingReset || _socialSigningIn != null;
 
   Future<void> _socialLogin(SocialProvider provider) async {
     if (_busy) return;
@@ -46,6 +48,34 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } finally {
       if (mounted) setState(() => _socialSigningIn = null);
+    }
+  }
+
+  Future<void> _requestReset() async {
+    if (_busy) return;
+    final email = _email.text.trim();
+    if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)) {
+      _demo('أدخل بريدك الإلكتروني في حقل البريد أولًا.');
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    setState(() => _sendingReset = true);
+    try {
+      await widget.authService.requestPasswordReset(email);
+      if (!mounted || widget.authService.isSignedIn) return;
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(builder: (_) => const PasswordResetSentScreen()),
+      );
+    } catch (error) {
+      if (mounted) {
+        _demo(
+          error is AuthFailure
+              ? error.message
+              : 'تعذّر إرسال الرابط. حاول مرة أخرى.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _sendingReset = false);
     }
   }
 
@@ -189,11 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Align(
                               alignment: AlignmentDirectional.centerStart,
                               child: TextButton(
-                                onPressed: _busy
-                                    ? null
-                                    : () => _demo(
-                                        'استعادة كلمة المرور غير متاحة حاليًا.',
-                                      ),
+                                onPressed: _busy ? null : _requestReset,
                                 style: TextButton.styleFrom(
                                   foregroundColor: ShareTheme.muted,
                                   padding: const EdgeInsets.symmetric(
