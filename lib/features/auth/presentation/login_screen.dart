@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/share_theme.dart';
 import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
-import 'password_reset_sent_screen.dart';
+import 'forgot_password_screen.dart';
 import '../../../core/widgets/share_logo.dart';
 import 'widgets/social_sign_in_button.dart';
 
@@ -22,9 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _password = TextEditingController();
   bool _hidePassword = true;
   bool _signingIn = false;
-  bool _sendingReset = false;
   SocialProvider? _socialSigningIn;
-  bool get _busy => _signingIn || _sendingReset || _socialSigningIn != null;
+  bool get _busy => _signingIn || _socialSigningIn != null;
 
   Future<void> _socialLogin(SocialProvider provider) async {
     if (_busy) return;
@@ -51,32 +50,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _requestReset() async {
+  void _requestReset() {
     if (_busy) return;
-    final email = _email.text.trim();
-    if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)) {
-      _demo('أدخل بريدك الإلكتروني في حقل البريد أولًا.');
-      return;
-    }
-    FocusScope.of(context).unfocus();
-    setState(() => _sendingReset = true);
-    try {
-      await widget.authService.requestPasswordReset(email);
-      if (!mounted || widget.authService.isSignedIn) return;
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute(builder: (_) => const PasswordResetSentScreen()),
-      );
-    } catch (error) {
-      if (mounted) {
-        _demo(
-          error is AuthFailure
-              ? error.message
-              : 'تعذّر إرسال الرابط. حاول مرة أخرى.',
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _sendingReset = false);
-    }
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => ForgotPasswordScreen(
+          authService: widget.authService,
+          initialEmail: _email.text.trim(),
+        ),
+      ),
+    );
   }
 
   @override

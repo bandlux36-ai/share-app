@@ -23,12 +23,14 @@ void main() {
         await tester.tap(link);
         await tester.pumpAndSettle();
         expect(auth.resetCalls, 0);
+        expect(find.text('ضع بريدك'), findsOneWidget);
         await tester.enterText(
-          find.byType(TextFormField).first,
+          find.byType(TextFormField).last,
           'test@example.com',
         );
-        await tester.ensureVisible(link);
-        await tester.tap(link);
+        final send = find.text('إرسال رابط إعادة التعيين');
+        await tester.ensureVisible(send);
+        await tester.tap(send);
         await tester.pumpAndSettle();
         expect(auth.resetCalls, 1);
         expect(auth.resetEmail, 'test@example.com');
