@@ -288,30 +288,41 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 23),
                             Directionality(
                               textDirection: TextDirection.ltr,
-                              child: Row(
-                                children: [
-                                  for (final provider
-                                      in SocialProvider.values) ...[
-                                    if (provider != SocialProvider.google)
-                                      const SizedBox(width: 16),
-                                    Expanded(
-                                      child: SocialSignInButton(
-                                        provider: provider,
-                                        isLoading:
-                                            provider == SocialProvider.google &&
-                                            _googleSigningIn,
-                                        onPressed:
-                                            provider == SocialProvider.google
-                                            ? (_signingIn || _googleSigningIn
-                                                  ? null
-                                                  : _googleLogin)
-                                            : () => _demo(
-                                                'تسجيل الدخول بواسطة ${provider.name} تجريبي فقط.',
-                                              ),
-                                      ),
+                              child: LayoutBuilder(
+                                builder: (context, socialConstraints) => Center(
+                                  child: SizedBox(
+                                    width:
+                                        (socialConstraints.maxWidth - 16) / 2,
+                                    child: Row(
+                                      children: [
+                                        for (final provider
+                                            in SocialProvider.values) ...[
+                                          if (provider != SocialProvider.google)
+                                            const SizedBox(width: 16),
+                                          Expanded(
+                                            child: SocialSignInButton(
+                                              provider: provider,
+                                              isLoading:
+                                                  provider ==
+                                                      SocialProvider.google &&
+                                                  _googleSigningIn,
+                                              onPressed:
+                                                  provider ==
+                                                      SocialProvider.google
+                                                  ? (_signingIn ||
+                                                            _googleSigningIn
+                                                        ? null
+                                                        : _googleLogin)
+                                                  : () => _demo(
+                                                      'تسجيل الدخول بواسطة ${provider.name} تجريبي فقط.',
+                                                    ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
                                     ),
-                                  ],
-                                ],
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(height: 18 + space / 2),

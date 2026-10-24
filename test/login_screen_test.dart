@@ -42,14 +42,14 @@ void main() {
     );
   });
 
-  testWidgets('Arabic RTL screen and all four demo providers are present', (
+  testWidgets('Arabic RTL screen keeps Google and Apple sign-in options', (
     tester,
   ) async {
     await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
 
     expect(find.text('ارفع محتواك .. وانشره في كل مكان'), findsOneWidget);
-    expect(find.byType(SocialSignInButton), findsNWidgets(4));
+    expect(find.byType(SocialSignInButton), findsNWidgets(2));
     expect(
       Directionality.of(tester.element(find.byType(Form))),
       TextDirection.rtl,

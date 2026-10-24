@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-enum SocialProvider { google, apple, facebook, x }
+enum SocialProvider { google, apple }
 
 class SocialSignInButton extends StatelessWidget {
   const SocialSignInButton({
@@ -19,8 +19,6 @@ class SocialSignInButton extends StatelessWidget {
   String get name => switch (provider) {
     SocialProvider.google => 'Google',
     SocialProvider.apple => 'Apple',
-    SocialProvider.facebook => 'Facebook',
-    SocialProvider.x => 'X',
   };
 
   @override
@@ -78,29 +76,6 @@ class SocialSignInButton extends StatelessWidget {
       size: 40,
       color: Colors.black,
     ),
-    SocialProvider.facebook => Container(
-      width: 34,
-      height: 34,
-      alignment: Alignment.bottomCenter,
-      decoration: const BoxDecoration(
-        color: Color(0xFF087AFF),
-        shape: BoxShape.circle,
-      ),
-      child: const Text(
-        'f',
-        style: TextStyle(
-          fontFamily: 'sans-serif',
-          fontSize: 37,
-          fontWeight: FontWeight.w800,
-          height: 1,
-          color: Colors.white,
-        ),
-      ),
-    ),
-    SocialProvider.x => const CustomPaint(
-      size: Size(29, 32),
-      painter: _XMarkPainter(),
-    ),
   };
 }
 
@@ -133,36 +108,4 @@ class _GoogleMarkPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_GoogleMarkPainter oldDelegate) => false;
-}
-
-class _XMarkPainter extends CustomPainter {
-  const _XMarkPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(1, 0)
-      ..lineTo(9, 0)
-      ..lineTo(28, 32)
-      ..lineTo(20, 32)
-      ..close();
-    canvas.drawPath(path, Paint()..color = Colors.black);
-    canvas.drawLine(
-      const Offset(27, 0),
-      const Offset(1, 32),
-      Paint()
-        ..color = Colors.black
-        ..strokeWidth = 2.5,
-    );
-    canvas.drawLine(
-      const Offset(5, 2),
-      const Offset(24, 30),
-      Paint()
-        ..color = Colors.white
-        ..strokeWidth = 1.2,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_XMarkPainter oldDelegate) => false;
 }
