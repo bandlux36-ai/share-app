@@ -49,7 +49,7 @@ https://iroqzjahasvmhtmsmsvy.supabase.co/auth/v1/callback
 https://bandlux36-ai.github.io/share-app/
 ```
 
-احتفظ بروابط Google واستعادة كلمة المرور الحالية. يمكن تخصيص رجوع Apple وقت البناء بواسطة `APPLE_AUTH_REDIRECT_URL`، ويجب السماح بالرابط المخصص في Supabase أيضًا.
+احتفظ بعنوان رجوع Google الحالي. يمكن تخصيص رجوع Apple وقت البناء بواسطة `APPLE_AUTH_REDIRECT_URL`، ويجب السماح بالرابط المخصص في Supabase أيضًا.
 
 ## 4. اختبار الويب
 

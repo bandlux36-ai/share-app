@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (116)
+## ملفات جديدة (110)
 
 - `.github/PAGES.md`
 - `.github/workflows/deploy-pages.yml`
@@ -86,33 +86,27 @@
 - `lib/core/widgets/share_logo.dart`
 - `lib/features/auth/data/auth_service.dart`
 - `lib/features/auth/data/oauth_provider_settings.dart`
-- `lib/features/auth/platform/recovery_location.dart`
-- `lib/features/auth/platform/recovery_location_stub.dart`
-- `lib/features/auth/platform/recovery_location_web.dart`
+- `lib/features/auth/platform/auth_location.dart`
+- `lib/features/auth/platform/auth_location_stub.dart`
+- `lib/features/auth/platform/auth_location_web.dart`
 - `lib/features/auth/presentation/auth_gate.dart`
-- `lib/features/auth/presentation/forgot_password_screen.dart`
 - `lib/features/auth/presentation/login_screen.dart`
-- `lib/features/auth/presentation/reset_password_screen.dart`
 - `lib/features/auth/presentation/widgets/auth_text_field.dart`
-- `lib/features/auth/presentation/widgets/recovery_layout.dart`
 - `lib/features/auth/presentation/widgets/social_sign_in_button.dart`
 - `lib/features/home/presentation/home_screen.dart`
 - `lib/main.dart`
 - `pubspec.lock`
 - `pubspec.yaml`
-- `screenshots/forgot-password.png`
 - `screenshots/login-logo-final.png`
 - `screenshots/login-logo-fixed.png`
 - `screenshots/login-screen-final.png`
 - `screenshots/login-screen-v2.png`
 - `screenshots/login-screen.png`
-- `screenshots/reset-password.png`
 - `test/auth_flow_test.dart`
 - `test/auth_service_test.dart`
 - `test/google_auth_test.dart`
 - `test/apple_auth_test.dart`
 - `test/login_screen_test.dart`
-- `test/password_recovery_test.dart`
 - `test/support/fake_auth_service.dart`
 - `test/support/memory_auth_storage.dart`
 - `web/favicon.png`

@@ -18,37 +18,15 @@ abstract final class SupabaseConfig {
     await Supabase.initialize(url: url, publishableKey: publishableKey);
   }
 
-  static bool isRecoveryUri(Uri uri) {
-    if (uri.queryParameters['recovery'] == '1') return true;
-    try {
-      return Uri.splitQueryString(uri.fragment)['type'] == 'recovery';
-    } on FormatException {
-      return false;
-    }
-  }
+  static String get oauthRedirectUrl => _redirectUrl('');
 
-  static String get recoveryRedirectUrl {
-    const configured = String.fromEnvironment('PASSWORD_RESET_REDIRECT_URL');
-    final base = configured.isNotEmpty
-        ? Uri.parse(configured)
-        : kIsWeb
-        ? Uri.base.resolve('.')
-        : Uri.parse('https://bandlux36-ai.github.io/share-app/');
-    return redirectUri(base, queryParameters: {'recovery': '1'}).toString();
-  }
+  static String get googleRedirectUrl =>
+      _redirectUrl(const String.fromEnvironment('GOOGLE_AUTH_REDIRECT_URL'));
 
-  static String get googleRedirectUrl {
-    const configured = String.fromEnvironment('GOOGLE_AUTH_REDIRECT_URL');
-    final base = configured.isNotEmpty
-        ? Uri.parse(configured)
-        : kIsWeb
-        ? Uri.base.resolve('.')
-        : Uri.parse('https://bandlux36-ai.github.io/share-app/');
-    return redirectUri(base).toString();
-  }
+  static String get appleRedirectUrl =>
+      _redirectUrl(const String.fromEnvironment('APPLE_AUTH_REDIRECT_URL'));
 
-  static String get appleRedirectUrl {
-    const configured = String.fromEnvironment('APPLE_AUTH_REDIRECT_URL');
+  static String _redirectUrl(String configured) {
     final base = configured.isNotEmpty
         ? Uri.parse(configured)
         : kIsWeb
@@ -58,7 +36,6 @@ abstract final class SupabaseConfig {
   }
 
   static String? oauthCallbackError(Uri callback, {required bool signedIn}) {
-    if (isRecoveryUri(callback)) return null;
     var fragment = <String, String>{};
     try {
       fragment = Uri.splitQueryString(callback.fragment);

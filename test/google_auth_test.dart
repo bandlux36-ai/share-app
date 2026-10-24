@@ -26,8 +26,8 @@ void main() {
       'https://example.invalid/share-app/',
     );
     expect(
-      redirectUri(source, queryParameters: {'recovery': '1'}).toString(),
-      'https://example.invalid/share-app/?recovery=1',
+      redirectUri(source, queryParameters: {'view': 'signin'}).toString(),
+      'https://example.invalid/share-app/?view=signin',
     );
   });
   OAuthProviderSettings settings(http.Client client) => OAuthProviderSettings(
@@ -69,7 +69,7 @@ void main() {
       var launches = 0;
       final service = SupabaseAuthService(
         client(),
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+        oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
         googleProviderEnabled: () async => false,
         googleLauncher: (_) async {
           launches++;
@@ -91,12 +91,12 @@ void main() {
   );
 
   test(
-    'Google redirect preserves Pages path and never reuses recovery parameters',
+    'Google redirect preserves Pages path and drops stale callback parameters',
     () async {
       String? redirect;
       final service = SupabaseAuthService(
         client(),
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+        oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
         googleProviderEnabled: () async => true,
         googleLauncher: (value) async {
           redirect = value;
@@ -112,7 +112,7 @@ void main() {
   test('A blocked launcher returns an actionable Arabic error', () async {
     final service = SupabaseAuthService(
       client(),
-      recoveryRedirectUrl: 'https://example.invalid/',
+      oauthRedirectUrl: 'https://example.invalid/',
       googleProviderEnabled: () async => true,
       googleLauncher: (_) async => false,
     );
@@ -135,7 +135,7 @@ void main() {
     addTearDown(transport.close);
     final service = SupabaseAuthService(
       client(),
-      recoveryRedirectUrl: 'https://example.invalid/',
+      oauthRedirectUrl: 'https://example.invalid/',
       googleProviderEnabled: settings(transport).isEnabled,
       googleLauncher: (_) async => fail('Must not launch when preflight fails'),
     );
@@ -169,13 +169,6 @@ void main() {
         isNotNull,
       );
       expect(SupabaseConfig.oauthCallbackError(code, signedIn: true), isNull);
-      expect(
-        SupabaseConfig.oauthCallbackError(
-          Uri.parse('https://example.invalid/?recovery=1&code=mock-code'),
-          signedIn: false,
-        ),
-        isNull,
-      );
     },
   );
 

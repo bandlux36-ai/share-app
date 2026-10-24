@@ -34,7 +34,7 @@ https://iroqzjahasvmhtmsmsvy.supabase.co/auth/v1/callback
 https://bandlux36-ai.github.io/share-app/
 ```
 
-وأضف العنوان نفسه إلى Redirect URLs، مع الاحتفاظ بعنوان استعادة كلمة المرور الموجود سابقًا. عنوان Supabase callback يُضاف في Google Cloud، وعنوان موقع شير يُضاف في Supabase؛ لكل منهما مكانه.
+وأضف العنوان نفسه إلى Redirect URLs. عنوان Supabase callback يُضاف في Google Cloud، وعنوان موقع شير يُضاف في Supabase؛ لكل منهما مكانه.
 
 ## 3. التجربة
 

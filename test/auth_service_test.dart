@@ -35,71 +35,6 @@ void main() {
   }
 
   test(
-    'Recovery email uses Supabase recover endpoint and explicit callback',
-    () async {
-      late http.Request sent;
-      final client = clientWith((request) async {
-        sent = request;
-        return response({}, 200);
-      });
-      final service = SupabaseAuthService(
-        client,
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
-      );
-      await service.requestPasswordReset(' user@example.com ');
-      expect(sent.method, 'POST');
-      expect(sent.url.path, '/auth/v1/recover');
-      expect(
-        sent.url.queryParameters['redirect_to'],
-        'https://example.invalid/share-app/?recovery=1',
-      );
-      expect((jsonDecode(sent.body) as Map)['email'], 'user@example.com');
-    },
-  );
-
-  test(
-    'Password update uses authenticated Supabase endpoint and completes recovery',
-    () async {
-      late http.Request sent;
-      final user = <String, dynamic>{
-        'id': 'test-user',
-        'email': 'user@example.com',
-        'app_metadata': {},
-        'user_metadata': {},
-        'created_at': '2026-01-01T00:00:00Z',
-      };
-      final client = clientWith((request) async {
-        sent = request;
-        return response(user, 200);
-      });
-      await client.auth.setInitialSession(
-        jsonEncode({
-          'access_token': 'test-access-token',
-          'refresh_token': 'test-refresh-token',
-          'token_type': 'bearer',
-          'expires_in': 3600,
-          'user': user,
-        }),
-      );
-      final service = SupabaseAuthService(
-        client,
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
-        passwordRecovery: true,
-      );
-      expect(service.isPasswordRecovery, isTrue);
-      await service.updatePassword('Example-new-password!');
-      expect(sent.method, 'PUT');
-      expect(sent.url.path, '/auth/v1/user');
-      expect(
-        (jsonDecode(sent.body) as Map)['password'],
-        'Example-new-password!',
-      );
-      expect(service.isPasswordRecovery, isFalse);
-      expect(service.isSignedIn, isTrue);
-    },
-  );
-
-  test(
     'Password grant signs in, emits a session and signs out via Supabase',
     () async {
       final requests = <http.Request>[];
@@ -122,7 +57,7 @@ void main() {
       });
       final service = SupabaseAuthService(
         client,
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+        oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
       );
       expect(service.isSignedIn, isFalse);
       final signedIn = service.authStateChanges.firstWhere((value) => value);
@@ -159,7 +94,7 @@ void main() {
       await expectLater(
         SupabaseAuthService(
           client,
-          recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+          oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
         ).signIn(email: 'user@example.com', password: 'invalid'),
         throwsA(
           isA<AuthFailure>().having((e) => e.message, 'message', entry.value),
@@ -175,7 +110,7 @@ void main() {
     await expectLater(
       SupabaseAuthService(
         client,
-        recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+        oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
       ).signIn(email: 'user@example.com', password: 'invalid'),
       throwsA(
         isA<AuthFailure>().having(

@@ -39,7 +39,7 @@ flutter run -d chrome --no-web-resources-cdn
 
 - الحقول تدعم البريد وكلمة المرور وإظهارها وإخفاءها، مع تحقق محلي بسيط.
 - استخدم حسابًا موجودًا في Supabase Auth: البريد وكلمة المرور يُرسلان عبر `signInWithPassword`. ليست هناك بيانات دخول تجريبية مضمّنة.
-- Google وApple مربوطان بـSupabase OAuth؛ يتطلب كل منهما تفعيل مزوّده كما في الدليلين أدناه. إنشاء الحساب بالبريد ما زال تجريبيًا. استعادة كلمة المرور مرتبطة بـSupabase.
+- Google وApple مربوطان بـSupabase OAuth؛ يتطلب كل منهما تفعيل مزوّده كما في الدليلين أدناه. إنشاء الحساب بالبريد ما زال تجريبيًا.
 - يعرض زر الدخول مؤشر تحميل ويمنع الطلبات المتكررة. أخطاء البيانات والاتصال تظهر بالعربية.
 - عند نجاح الدخول تظهر `HomeScreen` برسالة ترحيب وزر خروج. يستخدم الخروج `signOut` ثم تعيد حالة الجلسة المستخدم لشاشة الدخول.
 - يستعيد Supabase الجلسة المخزّنة عند تشغيل التطبيق؛ المستخدم المسجّل يدخل إلى الرئيسية مباشرة.
@@ -71,24 +71,6 @@ flutter run -d chrome --no-web-resources-cdn
 
 يمكن تخصيص عنوان الرجوع العام عبر `APPLE_AUTH_REDIRECT_URL` عند البناء؛ الافتراضي على الويب هو أصل الصفحة ومسارها دون معلمات أو fragment. مسار iOS/Android الأصلي وSign in with Apple الأصلي يحتاجان إعدادًا منفصلًا؛ الكود الحالي لا يضيف entitlement أو native Apple SDK. اختبارات Apple تستخدم استجابات OAuth محاكاة دون حساب Apple حقيقي.
 
-## استعادة كلمة المرور
-
-اضغط «نسيت كلمة المرور؟» وأدخل البريد. تستدعي الخدمة `resetPasswordForEmail` مع مؤشر تحميل، ورسالة نجاح عامة لا تكشف إن كان الحساب موجودًا. رابط الاستعادة يفتح شاشة كلمة مرور جديدة وتأكيدها؛ عند الحفظ تُستخدم `updateUser(UserAttributes(password: ...))`، ثم تظهر الرئيسية. الإلغاء يسجّل خروج جلسة الاستعادة. لا تُرسل كلمة المرور الجديدة في رسائل البريد ولا تُسجّل في logs.
-
-قبل الاستخدام الفعلي، من **Supabase → Authentication → URL Configuration → Redirect URLs** أضف الرابط التالي بالضبط:
-
-```text
-https://bandlux36-ai.github.io/share-app/?recovery=1
-```
-
-يُبنى رابط الرجوع تلقائيًا من أصل صفحة الويب ومسارها، بما يدعم `/share-app/`. يمكن تخصيصه عبر `--dart-define=PASSWORD_RESET_REDIRECT_URL=...` مع إضافته إلى قائمة Supabase المسموحة أيضًا. يستخدم التدفق PKCE، لذا افتح رسالة الاستعادة في المتصفح والجهاز اللذين طلبت منهما الرابط. لا تُدخل رابطًا يحتوي على code أو token في الإعدادات.
-
-يجب أن تكون خدمة البريد في Supabase مهيأة لإرسال الرسائل إلى المستخدمين؛ راجع SMTP وحدود الإرسال والبريد غير الهام إن لم تصل الرسالة. لم يرسل الاختبار أي رسالة بريد حقيقية ولم يغيّر كلمة مرور حساب فعلي.
-
-الشاشات تعمل على Flutter، لكن مسار روابط الاستعادة الحالي مهيأ للويب. تفعيل الرجوع إلى تطبيق iOS/Android المثبّت يتطلب إعداد Deep Links/Universal Links للمنصتين وعنوان redirect مناسبًا في بناء الجوال.
-
-[معاينة نسيت كلمة المرور](screenshots/forgot-password.png) · [معاينة تعيين كلمة مرور جديدة](screenshots/reset-password.png)
-
 ## تنظيم الملفات
 
 ```text
@@ -101,21 +83,20 @@ lib/
   core/widgets/share_logo.dart
   features/auth/data/auth_service.dart
   features/auth/data/oauth_provider_settings.dart
+  features/auth/platform/auth_location.dart
+  features/auth/platform/auth_location_stub.dart
+  features/auth/platform/auth_location_web.dart
   features/auth/presentation/
     auth_gate.dart
     login_screen.dart
-    forgot_password_screen.dart
-    reset_password_screen.dart
     widgets/
       auth_text_field.dart
-      recovery_layout.dart
       social_sign_in_button.dart
   features/home/presentation/home_screen.dart
 assets/fonts/                 # Noto Sans Arabic وترخيص OFL
 test/login_screen_test.dart   # RTL والحقول والأزرار والأحجام المختلفة
 test/auth_flow_test.dart      # التحميل والتحقق والجلسة والدخول والخروج
 test/auth_service_test.dart   # طلبات Supabase وترجمة أخطاء الخادم والاتصال
-test/password_recovery_test.dart # طلب الاستعادة والرابط وتأكيد كلمة المرور
 test/google_auth_test.dart    # مزود Google والتحميل وأخطاء OAuth
 test/apple_auth_test.dart     # مزود Apple ومنع الطلبات المتزامنة والرجوع
 android/                     # Android / Kotlin
@@ -129,7 +110,7 @@ web/                         # معاينة المتصفح
 
 ## حالة التحقق في البيئة السحابية
 
-نجح `flutter analyze` دون ملاحظات، ونجحت الاختبارات الـ54. أمر بناء الويب: `flutter build web --release --no-web-resources-cdn`. تغطي الاختبارات RTL وإظهار كلمة المرور والتحقق المحلي وإرسال النموذج وأحجام شاشات متعددة وتكبير النص ولوحة المفاتيح، إضافة إلى طلبات المصادقة والجلسة ورسائل الخطأ. اختبارات الدخول والخروج تستخدم خدمة اختبارية أو Supabase SDK مع خادم HTTP محاكى، ولا تسجّل الدخول بحساب إنتاجي ولا تنشئ حسابات. جرى أيضًا فحص المتصفح مع استجابات Auth محاكاة: الدخول، واستعادة الجلسة بعد تحديث الصفحة، والخروج، وبقاء حالة الخروج بعد تحديث جديد. فحص Google وApple يحاكي مسار OAuth مع PKCE ويشمل إلغاء الدخول والمزوّد المعطّل، دون تسجيل الدخول إلى حساب خارجي حقيقي. تُعرض أزرار Google وApple فقط في صف وسط الشاشة، مع الحفاظ على حجم الأزرار وبقية التنسيق.
+نجح `flutter analyze` دون ملاحظات، ونجحت الاختبارات الـ41. أمر بناء الويب: `flutter build web --release --no-web-resources-cdn`. تغطي الاختبارات RTL وإظهار كلمة المرور والتحقق المحلي وإرسال النموذج وأحجام شاشات متعددة وتكبير النص ولوحة المفاتيح، إضافة إلى طلبات المصادقة والجلسة ورسائل الخطأ. اختبارات الدخول والخروج تستخدم خدمة اختبارية أو Supabase SDK مع خادم HTTP محاكى، ولا تسجّل الدخول بحساب إنتاجي ولا تنشئ حسابات. جرى أيضًا فحص المتصفح مع استجابات Auth محاكاة: الدخول، واستعادة الجلسة بعد تحديث الصفحة، والخروج، وبقاء حالة الخروج بعد تحديث جديد. فحص Google وApple يحاكي مسار OAuth مع PKCE ويشمل إلغاء الدخول والمزوّد المعطّل، دون تسجيل الدخول إلى حساب خارجي حقيقي. تُعرض أزرار Google وApple فقط في صف وسط الشاشة، مع الحفاظ على حجم الأزرار وبقية التنسيق.
 
 لم يُختبر بناء Android أو iOS: لا يوجد Android SDK في هذه البيئة، وبناء iOS يتطلب macOS وXcode. لا تحتاج الشاشة أي أسرار. حُفظت إضافة `storage.googleapis.com` لسياسة الشبكة لتنزيل أدوات Flutter.
 

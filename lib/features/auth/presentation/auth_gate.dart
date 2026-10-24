@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../data/auth_service.dart';
-import '../platform/recovery_location.dart';
+import '../platform/auth_location.dart';
 import '../../home/presentation/home_screen.dart';
-import 'forgot_password_screen.dart';
 import 'login_screen.dart';
-import 'reset_password_screen.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key, required this.authService, this.initialAuthError});
@@ -30,7 +28,7 @@ class _AuthGateState extends State<AuthGate> {
     if (widget.initialAuthError != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        clearRecoveryLocation();
+        clearAuthLocation();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(widget.initialAuthError!)));
@@ -40,7 +38,7 @@ class _AuthGateState extends State<AuthGate> {
       (signedIn) {
         if (!mounted) return;
         setState(() => _signedIn = signedIn);
-        if (!signedIn) clearRecoveryLocation();
+        if (!signedIn) clearAuthLocation();
         if (signedIn) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
@@ -63,30 +61,8 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = widget.authService;
-    if (auth.isPasswordRecovery) {
-      if (_signedIn) {
-        return ResetPasswordScreen(
-          authService: auth,
-          onCompleted: () {
-            clearRecoveryLocation();
-            setState(() {});
-          },
-        );
-      }
-      return ForgotPasswordScreen(
-        authService: auth,
-        initialError:
-            'رابط الاستعادة غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.',
-        onBack: () {
-          clearRecoveryLocation();
-          auth.dismissPasswordRecovery();
-          setState(() {});
-        },
-      );
-    }
     return _signedIn
-        ? HomeScreen(authService: auth)
-        : LoginScreen(authService: auth);
+        ? HomeScreen(authService: widget.authService)
+        : LoginScreen(authService: widget.authService);
   }
 }

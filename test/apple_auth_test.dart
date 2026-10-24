@@ -58,7 +58,7 @@ void main() {
     addTearDown(transport.close);
     final service = SupabaseAuthService(
       client(),
-      recoveryRedirectUrl: 'https://example.invalid/share-app/?recovery=1',
+      oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale',
       appleProviderEnabled: settings(transport).isEnabled,
       appleLauncher: (_) async {
         launches++;
@@ -86,7 +86,7 @@ void main() {
         addTearDown(transport.close);
         final service = SupabaseAuthService(
           client(),
-          recoveryRedirectUrl: 'https://example.invalid/share-app/',
+          oauthRedirectUrl: 'https://example.invalid/share-app/',
           appleProviderEnabled: settings(transport).isEnabled,
           appleLauncher: (_) async => fail('Invalid settings must not launch'),
         );
@@ -105,13 +105,12 @@ void main() {
   }
 
   test(
-    'Apple redirect keeps Pages path and drops stale recovery state',
+    'Apple redirect keeps Pages path and drops stale callback parameters',
     () async {
       String? redirect;
       final service = SupabaseAuthService(
         client(),
-        recoveryRedirectUrl:
-            'https://example.invalid/share-app/?recovery=1#stale',
+        oauthRedirectUrl: 'https://example.invalid/share-app/?code=stale#stale',
         appleProviderEnabled: () async => true,
         appleLauncher: (url) async {
           redirect = url;
@@ -129,7 +128,7 @@ void main() {
     () async {
       final service = SupabaseAuthService(
         client(),
-        recoveryRedirectUrl: 'https://example.invalid/?recovery=1',
+        oauthRedirectUrl: 'https://example.invalid/?code=stale',
         googleRedirectUrl: 'https://example.invalid/google/',
         appleRedirectUrl: 'https://example.invalid/apple/',
         appleProviderEnabled: () async => true,
