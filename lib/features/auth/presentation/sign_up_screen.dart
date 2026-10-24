@@ -4,6 +4,7 @@ import '../../../core/widgets/share_logo.dart';
 import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
 import 'terms_screen.dart';
+import 'privacy_policy_screen.dart';
 import 'widgets/recovery_layout.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -236,14 +237,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () =>
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'سياسة الخصوصية غير متاحة حاليًا.',
-                                      ),
-                                    ),
-                                  ),
+                              onPressed: () => Navigator.of(context).push<void>(
+                                MaterialPageRoute(
+                                  builder: (_) => const PrivacyPolicyScreen(),
+                                ),
+                              ),
                               child: const Text(
                                 'سياسة الخصوصية',
                                 style: TextStyle(
