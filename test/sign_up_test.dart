@@ -26,7 +26,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(auth.signUpCalls, 0);
         await tester.ensureVisible(find.byType(CheckboxListTile));
-        await tester.tap(find.byType(CheckboxListTile));
+        await tester.tap(find.byType(Checkbox));
         await tester.ensureVisible(submit);
         await tester.tap(submit);
         await tester.pumpAndSettle();

@@ -3,6 +3,7 @@ import '../../../core/theme/share_theme.dart';
 import '../../../core/widgets/share_logo.dart';
 import '../data/auth_service.dart';
 import 'widgets/auth_text_field.dart';
+import 'terms_screen.dart';
 import 'widgets/recovery_layout.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -203,12 +204,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onChanged: _busy
                             ? null
                             : (v) => setState(() => _agree = v ?? false),
-                        title: const Text(
-                          'أوافق على الشروط والأحكام وسياسة الخصوصية',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: ShareTheme.muted,
-                          ),
+                        title: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const Text(
+                              'أوافق على ',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: ShareTheme.muted,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).push<void>(
+                                MaterialPageRoute(
+                                  builder: (_) => const TermsScreen(),
+                                ),
+                              ),
+                              child: const Text(
+                                'الشروط والأحكام',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              'و',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: ShareTheme.muted,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'سياسة الخصوصية غير متاحة حاليًا.',
+                                      ),
+                                    ),
+                                  ),
+                              child: const Text(
+                                'سياسة الخصوصية',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       if (_error != null)
