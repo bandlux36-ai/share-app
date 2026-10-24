@@ -9,10 +9,12 @@ class SocialSignInButton extends StatelessWidget {
     super.key,
     required this.provider,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   final SocialProvider provider;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isLoading;
 
   String get name => switch (provider) {
     SocialProvider.google => 'Google',
@@ -43,10 +45,22 @@ class SocialSignInButton extends StatelessWidget {
           onTap: onPressed,
           child: Semantics(
             button: true,
-            label: 'تسجيل الدخول بواسطة $name',
+            enabled: onPressed != null,
+            liveRegion: isLoading,
+            label: isLoading ? 'جارٍ فتح $name' : 'تسجيل الدخول بواسطة $name',
             child: AspectRatio(
               aspectRatio: 1,
-              child: Center(child: ExcludeSemantics(child: _icon())),
+              child: Center(
+                child: ExcludeSemantics(
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 26,
+                          height: 26,
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
+                        )
+                      : _icon(),
+                ),
+              ),
             ),
           ),
         ),

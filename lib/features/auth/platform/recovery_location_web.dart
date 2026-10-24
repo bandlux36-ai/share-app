@@ -1,4 +1,5 @@
 import 'dart:js_interop';
+import '../../../core/config/redirect_uri.dart';
 
 @JS('window.history.replaceState')
 external void _replaceState(JSAny? state, JSString title, JSString url);
@@ -19,9 +20,9 @@ void clearRecoveryLocation() {
       uri.fragment.contains('access_token=') ||
       uri.fragment.contains('refresh_token=') ||
       uri.fragment.contains('type=recovery');
-  final clean = uri.replace(
+  final clean = redirectUri(
+    uri,
     queryParameters: query.isEmpty ? null : query,
-    query: query.isEmpty ? '' : null,
     fragment: authFragment ? '' : uri.fragment,
   );
   if (clean != uri) _replaceState(null, ''.toJS, clean.toString().toJS);

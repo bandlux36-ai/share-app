@@ -22,6 +22,26 @@ class _LoginScreenState extends State<LoginScreen> {
   final _password = TextEditingController();
   bool _hidePassword = true;
   bool _signingIn = false;
+  bool _googleSigningIn = false;
+
+  Future<void> _googleLogin() async {
+    if (_signingIn || _googleSigningIn) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _googleSigningIn = true);
+    try {
+      await widget.authService.signInWithGoogle();
+    } catch (error) {
+      if (mounted) {
+        _demo(
+          error is AuthFailure
+              ? error.message
+              : 'تعذّر تسجيل الدخول بـGoogle. حاول مرة أخرى.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _googleSigningIn = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -37,7 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (_signingIn || !_formKey.currentState!.validate()) return;
+    if (_signingIn || _googleSigningIn || !_formKey.currentState!.validate()) {
+      return;
+    }
     FocusScope.of(context).unfocus();
     setState(() => _signingIn = true);
     try {
@@ -196,7 +218,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 boxShadow: const [ShareTheme.warmShadow],
                               ),
                               child: ElevatedButton(
-                                onPressed: _signingIn ? null : _login,
+                                onPressed: _signingIn || _googleSigningIn
+                                    ? null
+                                    : _login,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
@@ -273,9 +297,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Expanded(
                                       child: SocialSignInButton(
                                         provider: provider,
-                                        onPressed: () => _demo(
-                                          'تسجيل الدخول بواسطة ${provider.name} تجريبي فقط.',
-                                        ),
+                                        isLoading:
+                                            provider == SocialProvider.google &&
+                                            _googleSigningIn,
+                                        onPressed:
+                                            provider == SocialProvider.google
+                                            ? (_signingIn || _googleSigningIn
+                                                  ? null
+                                                  : _googleLogin)
+                                            : () => _demo(
+                                                'تسجيل الدخول بواسطة ${provider.name} تجريبي فقط.',
+                                              ),
                                       ),
                                     ),
                                   ],

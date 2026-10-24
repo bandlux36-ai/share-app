@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/config/redirect_uri.dart';
 
 abstract interface class AuthService {
   bool get isSignedIn;
@@ -10,6 +11,7 @@ abstract interface class AuthService {
   Future<void> requestPasswordReset(String email);
   Future<void> updatePassword(String password);
   Future<void> signIn({required String email, required String password});
+  Future<void> signInWithGoogle();
   Future<void> signOut();
 }
 
@@ -23,7 +25,13 @@ class SupabaseAuthService implements AuthService {
     this._client, {
     required this.recoveryRedirectUrl,
     bool passwordRecovery = false,
-  }) : _passwordRecovery = passwordRecovery {
+    String? googleRedirectUrl,
+    Future<bool> Function()? googleProviderEnabled,
+    Future<bool> Function(String redirectUrl)? googleLauncher,
+  }) : _passwordRecovery = passwordRecovery,
+       _googleRedirectUrl = googleRedirectUrl,
+       _googleProviderEnabled = googleProviderEnabled,
+       _googleLauncher = googleLauncher {
     authStateChanges = _client.auth.onAuthStateChange.map((event) {
       if (event.event == AuthChangeEvent.passwordRecovery) {
         _passwordRecovery = true;
@@ -36,6 +44,37 @@ class SupabaseAuthService implements AuthService {
   final SupabaseClient _client;
   final String recoveryRedirectUrl;
   bool _passwordRecovery;
+  final String? _googleRedirectUrl;
+  final Future<bool> Function()? _googleProviderEnabled;
+  final Future<bool> Function(String redirectUrl)? _googleLauncher;
+
+  @override
+  Future<void> signInWithGoogle() async {
+    try {
+      if (_googleProviderEnabled != null && !await _googleProviderEnabled()) {
+        throw const AuthFailure(
+          'تسجيل الدخول بـGoogle غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
+        );
+      }
+      final redirect =
+          _googleRedirectUrl ??
+          redirectUri(Uri.parse(recoveryRedirectUrl)).toString();
+      final opened = _googleLauncher != null
+          ? await _googleLauncher(redirect)
+          : await _client.auth.signInWithOAuth(
+              OAuthProvider.google,
+              redirectTo: redirect,
+              queryParams: const {'prompt': 'select_account'},
+            );
+      if (!opened) {
+        throw const AuthFailure(
+          'تعذّر فتح تسجيل الدخول بـGoogle. حاول مرة أخرى.',
+        );
+      }
+    } catch (error) {
+      throw _failure(error);
+    }
+  }
 
   @override
   late final Stream<bool> authStateChanges;
@@ -93,6 +132,7 @@ class SupabaseAuthService implements AuthService {
   }
 
   AuthFailure _failure(Object error) {
+    if (error is AuthFailure) return error;
     if (error is AuthRetryableFetchException || error is TimeoutException) {
       return const AuthFailure(
         'تعذّر الاتصال بالخادم. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
@@ -100,6 +140,11 @@ class SupabaseAuthService implements AuthService {
     }
     if (error is AuthException) {
       switch (error.code) {
+        case 'provider_disabled':
+        case 'unsupported_provider':
+          return const AuthFailure(
+            'تسجيل الدخول بـGoogle غير مفعّل حاليًا. يرجى المحاولة لاحقًا.',
+          );
         case 'invalid_credentials':
         case 'invalid_grant':
         case 'user_not_found':

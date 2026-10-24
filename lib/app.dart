@@ -6,9 +6,10 @@ import 'features/auth/data/auth_service.dart';
 import 'features/auth/presentation/auth_gate.dart';
 
 class ShareApp extends StatelessWidget {
-  const ShareApp({super.key, required this.authService});
+  const ShareApp({super.key, required this.authService, this.initialAuthError});
 
   final AuthService authService;
+  final String? initialAuthError;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,10 @@ class ShareApp extends StatelessWidget {
       supportedLocales: const [Locale('ar')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: ShareTheme.light,
-      home: AuthGate(authService: authService),
+      home: AuthGate(
+        authService: authService,
+        initialAuthError: initialAuthError,
+      ),
     );
   }
 }

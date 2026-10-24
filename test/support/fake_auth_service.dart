@@ -46,6 +46,14 @@ class FakeAuthService implements AuthService {
   int signOutCalls = 0;
   String? lastEmail;
   String? lastPassword;
+  Future<void> Function()? beforeGoogleSignIn;
+  int googleSignInCalls = 0;
+
+  @override
+  Future<void> signInWithGoogle() async {
+    googleSignInCalls++;
+    await beforeGoogleSignIn?.call();
+  }
 
   @override
   bool get isSignedIn => _signedIn;

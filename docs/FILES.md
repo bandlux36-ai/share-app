@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (110)
+## ملفات جديدة (114)
 
 - `.github/PAGES.md`
 - `.github/workflows/deploy-pages.yml`
@@ -36,6 +36,7 @@
 - `assets/fonts/Roboto-OFL.txt`
 - `assets/fonts/Roboto.ttf`
 - `docs/FILES.md`
+- `docs/GOOGLE_SIGN_IN.md`
 - `docs/login-preview.png`
 - `ios/.gitignore`
 - `ios/Flutter/AppFrameworkInfo.plist`
@@ -78,10 +79,12 @@
 - `ios/Runner/SceneDelegate.swift`
 - `ios/RunnerTests/RunnerTests.swift`
 - `lib/app.dart`
+- `lib/core/config/redirect_uri.dart`
 - `lib/core/config/supabase_config.dart`
 - `lib/core/theme/share_theme.dart`
 - `lib/core/widgets/share_logo.dart`
 - `lib/features/auth/data/auth_service.dart`
+- `lib/features/auth/data/google_provider_settings.dart`
 - `lib/features/auth/platform/recovery_location.dart`
 - `lib/features/auth/platform/recovery_location_stub.dart`
 - `lib/features/auth/platform/recovery_location_web.dart`
@@ -105,6 +108,7 @@
 - `screenshots/reset-password.png`
 - `test/auth_flow_test.dart`
 - `test/auth_service_test.dart`
+- `test/google_auth_test.dart`
 - `test/login_screen_test.dart`
 - `test/password_recovery_test.dart`
 - `test/support/fake_auth_service.dart`

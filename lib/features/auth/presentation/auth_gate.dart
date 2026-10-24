@@ -10,9 +10,10 @@ import 'login_screen.dart';
 import 'reset_password_screen.dart';
 
 class AuthGate extends StatefulWidget {
-  const AuthGate({super.key, required this.authService});
+  const AuthGate({super.key, required this.authService, this.initialAuthError});
 
   final AuthService authService;
+  final String? initialAuthError;
 
   @override
   State<AuthGate> createState() => _AuthGateState();
@@ -26,6 +27,15 @@ class _AuthGateState extends State<AuthGate> {
   void initState() {
     super.initState();
     _signedIn = widget.authService.isSignedIn;
+    if (widget.initialAuthError != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        clearRecoveryLocation();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(widget.initialAuthError!)));
+      });
+    }
     _subscription = widget.authService.authStateChanges.listen(
       (signedIn) {
         if (!mounted) return;
