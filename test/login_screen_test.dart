@@ -103,7 +103,7 @@ void main() {
     await tester.ensureVisible(submit);
     await tester.tap(submit);
     await tester.pumpAndSettle();
-    expect(find.text('مرحبًا بك في شير'), findsOneWidget);
+    expect(find.text('منصات النشر'), findsOneWidget);
   });
 
   for (final size in const [

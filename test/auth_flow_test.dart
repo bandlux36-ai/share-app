@@ -98,8 +98,10 @@ void main() {
     auth.beforeSignOut = () => request.future;
     await tester.pumpWidget(ShareApp(authService: auth));
     await tester.pumpAndSettle();
-    expect(find.text('مرحبًا بك في شير'), findsOneWidget);
+    expect(find.text('منصات النشر'), findsOneWidget);
     expect(find.byType(LoginScreen), findsNothing);
+    await tester.tap(find.text('الملف الشخصي'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('تسجيل الخروج'));
     await tester.pump();
     expect(
@@ -125,6 +127,8 @@ void main() {
       auth.beforeSignOut = () async =>
           throw const AuthFailure('تعذّر الاتصال بالخادم.');
       await tester.pumpWidget(ShareApp(authService: auth));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('الملف الشخصي'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('تسجيل الخروج'));
       await tester.pumpAndSettle();

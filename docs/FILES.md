@@ -4,7 +4,7 @@
 
 - `README.md`
 
-## ملفات جديدة (120)
+## ملفات جديدة (122)
 
 - `.github/PAGES.md`
 - `.github/workflows/deploy-pages.yml`
@@ -131,3 +131,7 @@
 - `lib/features/auth/presentation/terms_screen.dart`
 
 - `lib/features/auth/presentation/privacy_policy_screen.dart`
+
+- `test/home_screen_test.dart`
+
+- `screenshots/home-screen.png`
